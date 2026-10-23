@@ -39,9 +39,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   Tự Động Lưu Sheet
                 </span>
               </div>
-              <p className="text-xs text-slate-400 hidden sm:block">
-                Nhập liệu trực tiếp • Không cần đăng nhập • Tự động lưu về Google Sheet của bạn
-              </p>
             </div>
           </div>
 
