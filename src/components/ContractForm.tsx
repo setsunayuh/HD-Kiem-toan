@@ -27,15 +27,11 @@ import {
 interface ContractFormProps {
   onSaveContract: (contract: AuditContract) => Promise<{ success: boolean; sheetError?: string }>;
   isSyncing: boolean;
-  sheetConfigured: boolean;
-  onOpenSheetConfig: () => void;
 }
 
 export const ContractForm: React.FC<ContractFormProps> = ({
   onSaveContract,
   isSyncing,
-  sheetConfigured,
-  onOpenSheetConfig,
 }) => {
   // Form State
   const [customerCode, setCustomerCode] = useState('');
@@ -418,23 +414,6 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <p className="text-slate-300 text-xs sm:text-sm mt-1">
               Nhân viên chỉ cần mở trang web, nhập đầy đủ thông tin hợp đồng và phân bổ tỷ lệ nhóm (tổng 100%), bấm OK sẽ tự động gửi thẳng về file Google Sheet của bạn.
             </p>
-          </div>
-          <div className="flex items-center gap-2">
-            {sheetConfigured ? (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-medium">
-                <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                <span>Google Sheet Đã Kết Nối</span>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={onOpenSheetConfig}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/30 cursor-pointer"
-              >
-                <FileSpreadsheet className="w-4 h-4" />
-                <span>Cài Đặt Link Google Sheet</span>
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -1191,22 +1170,10 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
               {/* Sheet sync feedback */}
               <div className="pt-2 border-t border-slate-200 mt-2">
-                {sheetSyncResult?.success ? (
-                  <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
-                    <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                    <span>Đã tự động gửi dữ liệu về file Google Sheet của bạn!</span>
-                  </div>
-                ) : sheetConfigured ? (
-                  <div className="text-xs text-amber-700">
-                    {sheetSyncResult?.message ||
-                      'Hợp đồng đã lưu trên máy. Kiểm tra đường link Google Sheet trong phần Cài Đặt.'}
-                  </div>
-                ) : (
-                  <div className="text-xs text-slate-500 flex items-center gap-1.5">
-                    <FileSpreadsheet className="w-4 h-4 text-indigo-500" />
-                    <span>Hợp đồng đã lưu trên hệ thống. Hãy dán link Google Sheet để đồng bộ về file riêng của bạn.</span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                  <span>Đã tự động gửi dữ liệu về file Google Sheet của bạn!</span>
+                </div>
               </div>
             </div>
 

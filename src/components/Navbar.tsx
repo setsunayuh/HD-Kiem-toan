@@ -1,29 +1,22 @@
 import React from 'react';
 import {
-  FileSpreadsheet,
   FileCheck2,
   PlusCircle,
   TableProperties,
   BarChart3,
-  ExternalLink,
-  Settings,
-  CheckCircle2,
-  AlertCircle,
+  Sparkles,
 } from 'lucide-react';
-import { GoogleSheetConfig } from '../types/audit';
 import { MusicPlayer } from './MusicPlayer';
 
 interface NavbarProps {
-  activeTab: 'form' | 'list' | 'stats' | 'settings';
-  setActiveTab: (tab: 'form' | 'list' | 'stats' | 'settings') => void;
-  sheetConfig: GoogleSheetConfig | null;
+  activeTab: 'form' | 'list' | 'stats';
+  setActiveTab: (tab: 'form' | 'list' | 'stats') => void;
   contractsCount: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
-  sheetConfig,
   contractsCount,
 }) => {
   return (
@@ -52,35 +45,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Right Section: Music Player & Google Sheet Status */}
+          {/* Right Section: Background Music Player */}
           <div className="flex items-center gap-2 sm:gap-3">
-            {/* Background Music Player */}
             <MusicPlayer videoId="DCmLhoK3j0Y" />
-
-            {/* Google Sheet Direct Status */}
-            {sheetConfig && sheetConfig.spreadsheetUrl ? (
-              <a
-                href={sheetConfig.spreadsheetUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/90 border border-emerald-600/60 text-emerald-300 text-xs font-medium hover:bg-emerald-900 transition-colors shadow-sm"
-                title="Mở trực tiếp file Google Sheet của bạn"
-              >
-                <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                <span className="max-w-[130px] truncate">{sheetConfig.spreadsheetName || 'Google Sheet'}</span>
-                <ExternalLink className="w-3.5 h-3.5 text-emerald-400 ml-0.5" />
-              </a>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setActiveTab('settings')}
-                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs transition-colors"
-                title="Cấu hình đường link Google Sheet lưu trữ"
-              >
-                <Settings className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Nối Google Sheet</span>
-              </button>
-            )}
           </div>
         </div>
 
@@ -132,22 +99,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <BarChart3 className="w-4 h-4" />
             <span>Thống Kê Nhóm & Tỷ Lệ</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
-              activeTab === 'settings'
-                ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800'
-            }`}
-          >
-            <Settings className="w-4 h-4" />
-            <span>Cài Đặt Google Sheet Riêng</span>
-            {sheetConfig && sheetConfig.webhookUrl && (
-              <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-            )}
           </button>
         </nav>
       </div>

@@ -8,39 +8,34 @@ import { Navbar } from './components/Navbar';
 import { ContractForm } from './components/ContractForm';
 import { ContractList } from './components/ContractList';
 import { StatsDashboard } from './components/StatsDashboard';
-import { GoogleSheetSettingsModal } from './components/GoogleSheetSettingsModal';
 import { ContractDetailModal } from './components/ContractDetailModal';
-import { AuditContract, GoogleSheetConfig } from './types/audit';
+import { AuditContract } from './types/audit';
 import {
   getStoredContracts,
   saveContract,
   deleteContract,
   markContractSynced,
-  getStoredSheetConfig,
-  saveSheetConfig,
 } from './services/storageService';
-import { sendContractToSheetWebhook } from './services/googleSheetsWebhook';
+import {
+  sendContractToSheetWebhook,
+  DEFAULT_WEBHOOK_URL,
+} from './services/googleSheetsWebhook';
 import { AlertCircle, FileSpreadsheet, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'form' | 'list' | 'stats' | 'settings'>('form');
-  const [sheetConfig, setSheetConfig] = useState<GoogleSheetConfig | null>(null);
+  const [activeTab, setActiveTab] = useState<'form' | 'list' | 'stats'>('form');
   const [contracts, setContracts] = useState<AuditContract[]>([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [selectedContract, setSelectedContract] = useState<AuditContract | null>(null);
-  const [isSheetModalOpen, setIsSheetModalOpen] = useState(false);
   const [notification, setNotification] = useState<{
     type: 'success' | 'warning' | 'error';
     message: string;
   } | null>(null);
 
-  // Initialize stored contracts & sheet config
+  // Initialize stored contracts
   useEffect(() => {
     const storedContracts = getStoredContracts();
     setContracts(storedContracts);
-
-    const storedConfig = getStoredSheetConfig();
-    setSheetConfig(storedConfig);
   }, []);
 
   // Show auto-dismiss notification
@@ -55,7 +50,7 @@ export default function App() {
     }, durationMs);
   };
 
-  // Save new or updated Contract & automatically send to Google Sheet webhook
+  // Save new or updated Contract & automatically send to embedded Google Sheet webhook
   const handleSaveContract = async (
     contract: AuditContract
   ): Promise<{ success: boolean; sheetError?: string }> => {
@@ -65,42 +60,24 @@ export default function App() {
       const updatedList = saveContract(contract);
       setContracts(updatedList);
 
-      let sheetSyncSucceeded = false;
-      let sheetErrorMessage: string | undefined;
+      // 2. Automatically send to the embedded Google Sheet Webhook URL
+      const syncRes = await sendContractToSheetWebhook(DEFAULT_WEBHOOK_URL, contract);
 
-      // 2. Automatically send to Google Sheet webhook if configured (ZERO login needed!)
-      if (sheetConfig && sheetConfig.webhookUrl) {
-        const syncRes = await sendContractToSheetWebhook(
-          sheetConfig.webhookUrl,
-          contract
-        );
-
-        if (syncRes.success) {
-          sheetSyncSucceeded = true;
-          const syncedList = markContractSynced(contract.id, true);
-          setContracts(syncedList);
-          triggerNotification(
-            'success',
-            `Hợp đồng ${contract.contractNumber} đã được lưu và tự động cập nhật vào Google Sheet của bạn!`
-          );
-        } else {
-          sheetErrorMessage = syncRes.error;
-          triggerNotification(
-            'warning',
-            `Đã lưu trên máy. Chưa thể ghi về Sheet: ${syncRes.error}`
-          );
-        }
-      } else {
+      if (syncRes.success) {
+        const syncedList = markContractSynced(contract.id, true);
+        setContracts(syncedList);
         triggerNotification(
           'success',
-          `Hợp đồng ${contract.contractNumber} đã lưu thành công! (Chưa cài đặt Webhook Google Sheet để đồng bộ đám mây)`
+          `Hợp đồng ${contract.contractNumber} đã được lưu và tự động cập nhật vào Google Sheet của bạn!`
         );
+        return { success: true };
+      } else {
+        triggerNotification(
+          'warning',
+          `Đã lưu trên máy. Chưa thể ghi về Sheet: ${syncRes.error}`
+        );
+        return { success: false, sheetError: syncRes.error };
       }
-
-      return {
-        success: sheetSyncSucceeded,
-        sheetError: sheetErrorMessage,
-      };
     } catch (err: any) {
       console.error('Lỗi lưu hợp đồng:', err);
       triggerNotification('error', `Lỗi lưu hợp đồng: ${err.message}`);
@@ -114,16 +91,8 @@ export default function App() {
   const handleSyncSingleContract = async (
     contract: AuditContract
   ): Promise<{ success: boolean; error?: string }> => {
-    if (!sheetConfig || !sheetConfig.webhookUrl) {
-      setIsSheetModalOpen(true);
-      return {
-        success: false,
-        error: 'Chưa cấu hình Webhook Google Sheet. Vui lòng dán link trong mục Cài Đặt Google Sheet.',
-      };
-    }
-
     try {
-      const res = await sendContractToSheetWebhook(sheetConfig.webhookUrl, contract);
+      const res = await sendContractToSheetWebhook(DEFAULT_WEBHOOK_URL, contract);
       if (res.success) {
         const updated = markContractSynced(contract.id, true);
         setContracts(updated);
@@ -148,40 +117,12 @@ export default function App() {
     triggerNotification('success', 'Đã xóa hợp đồng khỏi danh sách.');
   };
 
-  // Batch Mark Synced
-  const handleMarkSyncedBatch = (syncedIds: string[]) => {
-    let updated = contracts;
-    syncedIds.forEach((id) => {
-      updated = markContractSynced(id, true);
-    });
-    setContracts(updated);
-  };
-
-  // Save new Sheet Config
-  const handleSaveSheetConfig = (newConfig: GoogleSheetConfig | null) => {
-    saveSheetConfig(newConfig);
-    setSheetConfig(newConfig);
-    if (newConfig) {
-      triggerNotification(
-        'success',
-        `Đã lưu cấu hình Google Sheet: "${newConfig.spreadsheetName}"`
-      );
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans antialiased text-slate-800">
       {/* Top Navbar */}
       <Navbar
-        activeTab={activeTab === 'settings' ? 'settings' : activeTab}
-        setActiveTab={(tab) => {
-          if (tab === 'settings') {
-            setIsSheetModalOpen(true);
-          } else {
-            setActiveTab(tab);
-          }
-        }}
-        sheetConfig={sheetConfig}
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
         contractsCount={contracts.length}
       />
 
@@ -215,15 +156,13 @@ export default function App() {
           <ContractForm
             onSaveContract={handleSaveContract}
             isSyncing={isSyncing}
-            sheetConfigured={!!(sheetConfig && sheetConfig.webhookUrl)}
-            onOpenSheetConfig={() => setIsSheetModalOpen(true)}
           />
         )}
 
         {activeTab === 'list' && (
           <ContractList
             contracts={contracts}
-            sheetConfig={sheetConfig}
+            sheetConfig={null}
             onDeleteContract={handleDeleteContract}
             onSyncContract={handleSyncSingleContract}
             onSelectContract={(c) => setSelectedContract(c)}
@@ -238,19 +177,8 @@ export default function App() {
       {selectedContract && (
         <ContractDetailModal
           contract={selectedContract}
-          sheetConfig={sheetConfig}
+          sheetConfig={null}
           onClose={() => setSelectedContract(null)}
-        />
-      )}
-
-      {/* Google Sheet Settings Modal (Zero-login webhook setup) */}
-      {isSheetModalOpen && (
-        <GoogleSheetSettingsModal
-          sheetConfig={sheetConfig}
-          contracts={contracts}
-          onSaveConfig={handleSaveSheetConfig}
-          onClose={() => setIsSheetModalOpen(false)}
-          onMarkSyncedBatch={handleMarkSyncedBatch}
         />
       )}
 
@@ -263,7 +191,7 @@ export default function App() {
             <span>Phiên bản doanh nghiệp 2026</span>
           </div>
           <div className="flex items-center gap-4 text-slate-400">
-            <span>Tự động lưu về Google Sheet riêng (Không cần đăng nhập)</span>
+            <span>Tự động lưu về Google Sheet riêng của bạn</span>
             <span>•</span>
             <span>Phân công nhóm tỷ lệ chuẩn 100%</span>
           </div>

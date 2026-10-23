@@ -1,5 +1,8 @@
 import { AuditContract, GoogleSheetConfig } from '../types/audit';
 
+export const DEFAULT_WEBHOOK_URL =
+  'https://script.google.com/macros/s/AKfycbyjSsWdoXHpWffFEbku8vVigPM7cKnuQ6BjMZJYh1wL-NlFb06lVJAn77l3hrrSI_J0/exec';
+
 export const DEFAULT_SHEET_NAMES = {
   contracts: 'Hợp Đồng Kiểm Toán',
   team: 'Chi Tiết Phân Công Nhân Sự',
@@ -175,10 +178,11 @@ export function formatTeamMembersToRows(contract: AuditContract): (string | numb
  * Without requiring any Google login from the employee!
  */
 export async function sendContractToSheetWebhook(
-  webhookUrl: string,
+  webhookUrl: string = DEFAULT_WEBHOOK_URL,
   contract: AuditContract
 ): Promise<{ success: boolean; error?: string }> {
-  if (!webhookUrl || !webhookUrl.trim().startsWith('http')) {
+  const targetUrl = (webhookUrl || DEFAULT_WEBHOOK_URL).trim();
+  if (!targetUrl || !targetUrl.startsWith('http')) {
     return {
       success: false,
       error: 'Chưa cấu hình URL kết nối Google Sheet. Vui lòng thiết lập trong Cài Đặt Google Sheets.',
@@ -198,7 +202,7 @@ export async function sendContractToSheetWebhook(
     // Send to Google Apps Script Web App
     // Note: text/plain avoids CORS preflight OPTIONS which Google Apps Script doesn't handle,
     // and mode 'no-cors' guarantees submission even through 302 redirects.
-    await fetch(webhookUrl.trim(), {
+    await fetch(targetUrl, {
       method: 'POST',
       mode: 'no-cors',
       headers: {
