@@ -1,0 +1,7 @@
+{
+  "name": "Quản Lý Hợp Đồng Kiểm Toán",
+  "description": "Hệ thống quản lý hợp đồng kiểm toán, phân công nhóm kiểm toán và đồng bộ dữ liệu Google Sheets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
