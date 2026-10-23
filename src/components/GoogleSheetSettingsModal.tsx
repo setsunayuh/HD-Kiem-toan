@@ -1,188 +1,165 @@
 import React, { useState } from 'react';
-import { User } from 'firebase/auth';
+import { GoogleSheetConfig, AuditContract } from '../types/audit';
 import {
-  GoogleSheetConfig,
-  AuditContract,
-} from '../types/audit';
-import {
-  createAuditSpreadsheet,
-  verifySpreadsheetAccess,
-  extractSpreadsheetId,
-  syncContractToGoogleSheet,
-  DEFAULT_SHEET_NAMES,
-} from '../services/googleSheetsService';
-import { GoogleSignInButton } from './GoogleSignInButton';
+  sendContractToSheetWebhook,
+  GOOGLE_APPS_SCRIPT_CODE,
+} from '../services/googleSheetsWebhook';
 import {
   FileSpreadsheet,
-  PlusCircle,
   Link,
   CheckCircle2,
   AlertCircle,
   ExternalLink,
-  RefreshCw,
+  Copy,
+  Check,
+  Code2,
   FolderSync,
   HelpCircle,
   X,
-  FileCheck2,
+  Send,
 } from 'lucide-react';
 
 interface GoogleSheetSettingsModalProps {
-  user: User | null;
-  accessToken: string | null;
   sheetConfig: GoogleSheetConfig | null;
   contracts: AuditContract[];
   onSaveConfig: (config: GoogleSheetConfig | null) => void;
-  onLogin: () => void;
   onClose: () => void;
-  isLoggingIn: boolean;
   onMarkSyncedBatch: (ids: string[]) => void;
 }
 
 export const GoogleSheetSettingsModal: React.FC<GoogleSheetSettingsModalProps> = ({
-  user,
-  accessToken,
   sheetConfig,
   contracts,
   onSaveConfig,
-  onLogin,
   onClose,
-  isLoggingIn,
   onMarkSyncedBatch,
 }) => {
-  const [sheetInput, setSheetInput] = useState(sheetConfig?.spreadsheetUrl || '');
-  const [isCreatingSheet, setIsCreatingSheet] = useState(false);
-  const [isVerifying, setIsVerifying] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState(sheetConfig?.webhookUrl || '');
+  const [spreadsheetUrl, setSpreadsheetUrl] = useState(sheetConfig?.spreadsheetUrl || '');
+  const [spreadsheetName, setSpreadsheetName] = useState(
+    sheetConfig?.spreadsheetName || 'Quản Lý Hợp Đồng Kiểm Toán'
+  );
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [isTesting, setIsTesting] = useState(false);
   const [isSyncingAll, setIsSyncingAll] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
+  const [statusMessage, setStatusMessage] = useState<{
+    type: 'success' | 'error' | 'info';
+    text: string;
+  } | null>(null);
 
-  // Create brand new Google Sheet
-  const handleCreateNewSheet = async () => {
-    if (!accessToken) {
-      setStatusMessage({
-        type: 'error',
-        text: 'Vui lòng bấm nút "Đăng nhập bằng Google" trước khi tạo file Google Sheet.',
-      });
-      return;
-    }
-
-    try {
-      setIsCreatingSheet(true);
-      setStatusMessage({ type: 'info', text: 'Đang tạo bảng tính Google Sheet mới...' });
-
-      const result = await createAuditSpreadsheet(
-        accessToken,
-        'QUẢN LÝ HỢP ĐỒNG KIỂM TOÁN - HỆ THỐNG NỘI BỘ'
-      );
-
-      const newConfig: GoogleSheetConfig = {
-        spreadsheetId: result.spreadsheetId,
-        spreadsheetName: result.title,
-        spreadsheetUrl: result.spreadsheetUrl,
-        contractSheetName: DEFAULT_SHEET_NAMES.contracts,
-        teamSheetName: DEFAULT_SHEET_NAMES.team,
-        autoSync: true,
-        lastSyncTime: new Date().toISOString(),
-      };
-
-      onSaveConfig(newConfig);
-      setSheetInput(result.spreadsheetUrl);
-      setStatusMessage({
-        type: 'success',
-        text: `Đã tạo thành công file Google Sheet mới! Các hợp đồng kiểm toán sẽ được tự động đồng bộ vào file này.`,
-      });
-    } catch (err: any) {
-      console.error('Lỗi tạo Google Sheet:', err);
-      setStatusMessage({
-        type: 'error',
-        text: err.message || 'Không thể tạo Google Sheet. Vui lòng kiểm tra quyền đăng nhập Google.',
-      });
-    } finally {
-      setIsCreatingSheet(false);
-    }
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(GOOGLE_APPS_SCRIPT_CODE);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 3000);
   };
 
-  // Link existing Google Sheet
-  const handleLinkExistingSheet = async () => {
-    const rawId = extractSpreadsheetId(sheetInput);
-    if (!rawId) {
+  const handleSave = () => {
+    if (!webhookUrl.trim()) {
       setStatusMessage({
         type: 'error',
-        text: 'Vui lòng dán đúng đường link Google Sheet (ví dụ: https://docs.google.com/spreadsheets/d/...) hoặc ID bảng tính.',
+        text: 'Vui lòng dán đường dẫn Webhook URL (Apps Script Web App) để hệ thống tự động ghi về file Google Sheet.',
       });
       return;
     }
 
-    if (!accessToken) {
+    const newConfig: GoogleSheetConfig = {
+      webhookUrl: webhookUrl.trim(),
+      spreadsheetUrl: spreadsheetUrl.trim() || 'https://docs.google.com/spreadsheets',
+      spreadsheetName: spreadsheetName.trim() || 'Hợp Đồng Kiểm Toán',
+      contractSheetName: 'Hợp Đồng Kiểm Toán',
+      teamSheetName: 'Chi Tiết Phân Công Nhân Sự',
+      autoSync: true,
+      lastSyncTime: new Date().toISOString(),
+    };
+
+    onSaveConfig(newConfig);
+    setStatusMessage({
+      type: 'success',
+      text: 'Đã lưu cấu hình Google Sheet thành công! Giờ đây mỗi khi nhân viên bấm OK, dữ liệu sẽ tự động lưu về file này.',
+    });
+  };
+
+  // Test send a test row
+  const handleTestConnection = async () => {
+    if (!webhookUrl.trim()) {
       setStatusMessage({
         type: 'error',
-        text: 'Vui lòng đăng nhập Google để cấp quyền kết nối bảng tính này.',
+        text: 'Vui lòng nhập Webhook URL trước khi thử nghiệm kết nối.',
       });
       return;
     }
 
     try {
-      setIsVerifying(true);
-      setStatusMessage({ type: 'info', text: 'Đang kiểm tra kết nối bảng tính...' });
+      setIsTesting(true);
+      setStatusMessage({ type: 'info', text: 'Đang gửi thử nghiệm một dòng dữ liệu về Google Sheet của bạn...' });
 
-      const check = await verifySpreadsheetAccess(accessToken, rawId);
-      if (!check.valid) {
+      const testContract: AuditContract = {
+        id: 'test-' + Date.now(),
+        customerCode: '00000',
+        customerName: '[DÒNG KIỂM TRA KẾT NỐI] Công ty Thử Nghiệm Kết Nối Sheet',
+        contractNumber: '000/2026',
+        contractDate: new Date().toLocaleDateString('vi-VN'),
+        service: 'Kiểm toán',
+        reportPeriod: '31/12',
+        reportNumber: 'TEST-000',
+        reportDate: new Date().toLocaleDateString('vi-VN'),
+        boardMember: 'Bùi Tuyết Vân',
+        auditor: 'Nguyễn Ngọc Thùy Dung',
+        auditOpinion: 'Chấp nhận toàn phần',
+        additionalOpinions: {
+          otherMatters: false,
+          emphasisOfMatter: false,
+          reason: 'Dòng thử nghiệm kết nối tự động từ ứng dụng',
+        },
+        teamMembers: [
+          {
+            id: 'tm-test',
+            position: 'Nhóm trưởng',
+            name: 'Thùy Dung',
+            section: 'Báo cáo',
+            percentage: 100,
+          },
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      const res = await sendContractToSheetWebhook(webhookUrl.trim(), testContract);
+      if (res.success) {
+        setStatusMessage({
+          type: 'success',
+          text: 'Kết nối thành công! Đã gửi thành công 1 dòng thử nghiệm về Google Sheet của bạn. Bạn hãy mở file Google Sheet để kiểm tra.',
+        });
+      } else {
         setStatusMessage({
           type: 'error',
-          text: `Không thể truy cập Google Sheet: ${check.error || 'Quyền truy cập bị từ chối'}`,
+          text: `Gửi thử nghiệm không thành công: ${res.error}`,
         });
-        return;
       }
-
-      const newConfig: GoogleSheetConfig = {
-        spreadsheetId: rawId,
-        spreadsheetName: check.title || 'Google Sheet Hợp Đồng Kiểm Toán',
-        spreadsheetUrl: `https://docs.google.com/spreadsheets/d/${rawId}/edit`,
-        contractSheetName: check.sheets?.includes(DEFAULT_SHEET_NAMES.contracts)
-          ? DEFAULT_SHEET_NAMES.contracts
-          : check.sheets?.[0] || DEFAULT_SHEET_NAMES.contracts,
-        teamSheetName: check.sheets?.includes(DEFAULT_SHEET_NAMES.team)
-          ? DEFAULT_SHEET_NAMES.team
-          : check.sheets?.[1] || DEFAULT_SHEET_NAMES.team,
-        autoSync: true,
-        lastSyncTime: new Date().toISOString(),
-      };
-
-      onSaveConfig(newConfig);
-      setStatusMessage({
-        type: 'success',
-        text: `Đã liên kết thành công với Google Sheet: "${check.title}"`,
-      });
     } catch (err: any) {
       setStatusMessage({
         type: 'error',
-        text: err.message || 'Lỗi khi kiểm tra Google Sheet.',
+        text: `Lỗi kết nối: ${err.message}`,
       });
     } finally {
-      setIsVerifying(false);
+      setIsTesting(false);
     }
   };
 
-  // Sync all local contracts to sheet
+  // Sync all existing contracts
   const handleSyncAllContracts = async () => {
-    if (!sheetConfig) {
-      setStatusMessage({ type: 'error', text: 'Chưa có file Google Sheet nào được cấu hình.' });
-      return;
-    }
-    if (!accessToken) {
-      setStatusMessage({
-        type: 'error',
-        text: 'Phiên làm việc hết hạn. Vui lòng đăng nhập Google lại để đồng bộ.',
-      });
+    if (!webhookUrl.trim()) {
+      setStatusMessage({ type: 'error', text: 'Chưa có Webhook URL Google Sheet nào được cấu hình.' });
       return;
     }
 
     try {
       setIsSyncingAll(true);
-      setStatusMessage({ type: 'info', text: `Đang đồng bộ ${contracts.length} hợp đồng...` });
+      setStatusMessage({ type: 'info', text: `Đang gửi ${contracts.length} hợp đồng về Google Sheet của bạn...` });
 
       const syncedIds: string[] = [];
       for (const contract of contracts) {
-        const res = await syncContractToGoogleSheet(accessToken, sheetConfig, contract);
+        const res = await sendContractToSheetWebhook(webhookUrl.trim(), contract);
         if (res.success) {
           syncedIds.push(contract.id);
         }
@@ -191,12 +168,12 @@ export const GoogleSheetSettingsModal: React.FC<GoogleSheetSettingsModalProps> =
       onMarkSyncedBatch(syncedIds);
       setStatusMessage({
         type: 'success',
-        text: `Đồng bộ hoàn tất! Đã ghi ${syncedIds.length}/${contracts.length} hợp đồng vào Google Sheet.`,
+        text: `Đồng bộ hoàn tất! Đã gửi ${syncedIds.length}/${contracts.length} hợp đồng về file Google Sheet.`,
       });
     } catch (err: any) {
       setStatusMessage({
         type: 'error',
-        text: err.message || 'Lỗi trong quá trình đồng bộ toàn bộ hợp đồng.',
+        text: err.message || 'Lỗi khi đồng bộ.',
       });
     } finally {
       setIsSyncingAll(false);
@@ -214,10 +191,10 @@ export const GoogleSheetSettingsModal: React.FC<GoogleSheetSettingsModalProps> =
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900">
-                Cài Đặt Đồng Bộ Google Sheets
+                Cài Đặt File Google Sheet Của Riêng Bạn
               </h3>
               <p className="text-xs text-slate-500">
-                Tự động lưu trữ hợp đồng và phân công nhân sự vào file Google Sheet của bạn
+                Nhân viên không cần đăng nhập Google • Dữ liệu tự động gửi thẳng về file của bạn
               </p>
             </div>
           </div>
@@ -225,7 +202,7 @@ export const GoogleSheetSettingsModal: React.FC<GoogleSheetSettingsModalProps> =
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -247,165 +224,143 @@ export const GoogleSheetSettingsModal: React.FC<GoogleSheetSettingsModalProps> =
             ) : statusMessage.type === 'error' ? (
               <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
             ) : (
-              <RefreshCw className="w-5 h-5 text-blue-600 flex-shrink-0 animate-spin" />
+              <Send className="w-5 h-5 text-blue-600 flex-shrink-0 animate-bounce" />
             )}
             <div className="flex-1">{statusMessage.text}</div>
           </div>
         )}
 
-        {/* Step 1: Google Account Authentication */}
-        <div className="mb-6 p-5 rounded-2xl bg-slate-50 border border-slate-200">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <span>1. Tài Khoản Google Được Cấp Quyền</span>
-                {user ? (
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> Đã kết nối
-                  </span>
-                ) : (
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">
-                    Chưa đăng nhập
-                  </span>
-                )}
-              </h4>
-              <p className="text-xs text-slate-500 mt-1">
-                {user
-                  ? `Đang đăng nhập với: ${user.email} (${user.displayName || 'Người dùng'})`
-                  : 'Cần đăng nhập Google để ứng dụng có quyền ghi vào Google Sheets của bạn.'}
-              </p>
-            </div>
+        {/* Inputs */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+              1. Webhook URL Tự Động Lưu (Google Apps Script Web App) <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={webhookUrl}
+              onChange={(e) => setWebhookUrl(e.target.value)}
+              placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm font-mono text-slate-900"
+            />
+            <p className="text-[11px] text-slate-500 mt-1">
+              Đường link triển khai Apps Script (Web App) từ file Google Sheet của bạn.
+            </p>
+          </div>
 
-            {!user && (
-              <GoogleSignInButton
-                onClick={onLogin}
-                loading={isLoggingIn}
-                text="Đăng nhập Google"
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                2. Đường Link Xem File Google Sheet
+              </label>
+              <input
+                type="text"
+                value={spreadsheetUrl}
+                onChange={(e) => setSpreadsheetUrl(e.target.value)}
+                placeholder="https://docs.google.com/spreadsheets/d/.../edit"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm text-slate-900"
               />
-            )}
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                Tên Bảng Tính Hiển Thị
+              </label>
+              <input
+                type="text"
+                value={spreadsheetName}
+                onChange={(e) => setSpreadsheetName(e.target.value)}
+                placeholder="VD: Quản Lý Hợp Đồng Kiểm Toán 2026"
+                className="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 text-xs sm:text-sm text-slate-900"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Step 2: Choose Google Sheet Option */}
-        <div className="space-y-5">
-          <h4 className="text-sm font-bold text-slate-900">
-            2. Lựa Chọn File Google Sheet Lưu Trữ
-          </h4>
-
-          {/* Option A: 1-Click Auto Creation */}
-          <div className="p-4 rounded-xl border border-indigo-200 bg-indigo-50/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div>
-              <div className="text-sm font-bold text-indigo-900 flex items-center gap-1.5">
-                <PlusCircle className="w-4 h-4 text-indigo-600" />
-                Cách 1: Tự Động Tạo File Google Sheet Mới
-              </div>
-              <p className="text-xs text-indigo-700/80 mt-0.5">
-                Hệ thống tự động tạo file mẫu chuẩn với đầy đủ 2 Sheet và các cột tiêu đề kiểm toán.
-              </p>
-            </div>
+        {/* How to get Webhook URL in 3 simple steps */}
+        <div className="mt-5 p-4 rounded-2xl bg-indigo-50/60 border border-indigo-200">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-bold text-indigo-950 flex items-center gap-1.5 uppercase">
+              <Code2 className="w-4 h-4 text-indigo-600" />
+              Cách Tạo Webhook Trong 1 Phút (Chỉ Cần Làm 1 Lần Duy Nhất)
+            </span>
             <button
               type="button"
-              onClick={handleCreateNewSheet}
-              disabled={isCreatingSheet}
-              className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50 whitespace-nowrap"
+              onClick={handleCopyCode}
+              className="inline-flex items-center gap-1 px-2.5 py-1 bg-white hover:bg-indigo-100 text-indigo-700 border border-indigo-300 rounded-lg text-xs font-semibold transition-colors cursor-pointer"
             >
-              {isCreatingSheet ? 'Đang tạo...' : 'Tạo File Mới Ngay'}
+              {copiedCode ? (
+                <>
+                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Đã sao chép!</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3.5 h-3.5" />
+                  <span>Sao chép mã Apps Script</span>
+                </>
+              )}
             </button>
           </div>
 
-          {/* Option B: Connect Existing Sheet URL */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-3">
-            <div>
-              <div className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                <Link className="w-4 h-4 text-slate-600" />
-                Cách 2: Sử Dụng File Google Sheet Có Sẵn Của Bạn
-              </div>
-              <p className="text-xs text-slate-500 mt-0.5">
-                Dán đường link bảng tính Google Sheet của bạn vào ô dưới đây:
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={sheetInput}
-                onChange={(e) => setSheetInput(e.target.value)}
-                placeholder="https://docs.google.com/spreadsheets/d/.../edit"
-                className="flex-1 px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="button"
-                onClick={handleLinkExistingSheet}
-                disabled={isVerifying}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all disabled:opacity-50"
-              >
-                {isVerifying ? 'Đang kiểm tra...' : 'Liên Kết'}
-              </button>
-            </div>
-          </div>
+          <ol className="text-xs text-indigo-900 space-y-1 list-decimal list-inside leading-relaxed">
+            <li>
+              Mở file Google Sheet của bạn &rarr; Chọn menu <strong>Tiện ích mở rộng (Extensions)</strong> &rarr; <strong>Apps Script</strong>.
+            </li>
+            <li>
+              Bấm nút <strong>Sao chép mã Apps Script</strong> ở trên &rarr; Xóa nội dung cũ trong Apps Script và <strong>Dán vào</strong> &rarr; Nhấn Lưu (Ctrl + S).
+            </li>
+            <li>
+              Bấm <strong>Triển khai (Deploy)</strong> &rarr; <strong>Tùy chọn triển khai mới (New deployment)</strong> &rarr; Chọn <strong>Ứng dụng web (Web app)</strong> &rarr; Tại mục &quot;Ai có quyền truy cập&quot; chọn <strong>Bất kỳ ai (Anyone)</strong> &rarr; Bấm Triển khai &rarr; Copy đường dẫn Web App dán vào ô số 1 ở trên!
+            </li>
+          </ol>
         </div>
 
-        {/* Current Active Sheet Information */}
-        {sheetConfig && (
-          <div className="mt-6 p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-emerald-900">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                <span className="font-bold text-sm">File Google Sheet Hiện Tại:</span>
-              </div>
-              <a
-                href={sheetConfig.spreadsheetUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 text-xs text-emerald-700 hover:text-emerald-900 font-bold underline"
-              >
-                <span>Mở trong tab mới</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
+        {/* Action Buttons */}
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-200">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleTestConnection}
+              disabled={isTesting}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
+            >
+              <Send className="w-3.5 h-3.5 text-indigo-600" />
+              <span>{isTesting ? 'Đang gửi test...' : 'Gửi Thử Nghiệm 1 Dòng'}</span>
+            </button>
 
-            <div className="mt-2 text-xs space-y-1">
-              <div>
-                <strong>Tên file:</strong> {sheetConfig.spreadsheetName}
-              </div>
-              <div>
-                <strong>Tab lưu hợp đồng:</strong> {sheetConfig.contractSheetName}
-              </div>
-              <div>
-                <strong>Tab phân công nhân sự:</strong> {sheetConfig.teamSheetName}
-              </div>
-              <div>
-                <strong>Trạng thái tự động:</strong> Mỗi khi bạn nhấn &quot;OK&quot; ở form hợp đồng, dữ liệu sẽ tự động ghi vào file này!
-              </div>
-            </div>
-
-            {/* Sync all button */}
-            <div className="mt-4 pt-3 border-t border-emerald-200 flex justify-between items-center">
-              <span className="text-xs text-emerald-800">
-                Hiện có {contracts.length} hợp đồng trên hệ thống
-              </span>
+            {sheetConfig && (
               <button
                 type="button"
                 onClick={handleSyncAllContracts}
                 disabled={isSyncingAll}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-semibold transition-colors cursor-pointer disabled:opacity-50"
               >
-                <FolderSync className="w-3.5 h-3.5" />
-                <span>{isSyncingAll ? 'Đang đẩy dữ liệu...' : 'Đồng Bộ Toàn Bộ Danh Sách Lên Sheet'}</span>
+                <FolderSync className="w-3.5 h-3.5 text-teal-600" />
+                <span>{isSyncingAll ? 'Đang đồng bộ...' : 'Đồng Bộ Hết Lên Sheet'}</span>
               </button>
-            </div>
+            )}
           </div>
-        )}
 
-        {/* Footer */}
-        <div className="mt-6 pt-4 border-t border-slate-200 flex justify-end">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-colors"
-          >
-            Đóng
-          </button>
+          <div className="flex items-center gap-2">
+            {spreadsheetUrl && (
+              <a
+                href={spreadsheetUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-emerald-700 hover:underline"
+              >
+                <span>Mở Google Sheet</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            )}
+            <button
+              type="button"
+              onClick={handleSave}
+              className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-indigo-600/20 cursor-pointer"
+            >
+              Lưu Cấu Hình
+            </button>
+          </div>
         </div>
       </div>
     </div>

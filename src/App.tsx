@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
 import { Navbar } from './components/Navbar';
 import { ContractForm } from './components/ContractForm';
 import { ContractList } from './components/ContractList';
@@ -13,13 +12,6 @@ import { GoogleSheetSettingsModal } from './components/GoogleSheetSettingsModal'
 import { ContractDetailModal } from './components/ContractDetailModal';
 import { AuditContract, GoogleSheetConfig } from './types/audit';
 import {
-  initAuth,
-  googleSignIn,
-  logout,
-  getAccessToken,
-  setCachedAccessToken,
-} from './services/firebaseAuth';
-import {
   getStoredContracts,
   saveContract,
   deleteContract,
@@ -27,16 +19,13 @@ import {
   getStoredSheetConfig,
   saveSheetConfig,
 } from './services/storageService';
-import { syncContractToGoogleSheet } from './services/googleSheetsService';
+import { sendContractToSheetWebhook } from './services/googleSheetsWebhook';
 import { AlertCircle, FileSpreadsheet, ShieldAlert, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'form' | 'list' | 'stats' | 'settings'>('form');
-  const [user, setUser] = useState<User | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [sheetConfig, setSheetConfig] = useState<GoogleSheetConfig | null>(null);
   const [contracts, setContracts] = useState<AuditContract[]>([]);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const [selectedContract, setSelectedContract] = useState<AuditContract | null>(null);
   const [isSheetModalOpen, setIsSheetModalOpen] = useState(false);
@@ -45,31 +34,13 @@ export default function App() {
     message: string;
   } | null>(null);
 
-  // Initialize Auth & stored state
+  // Initialize stored contracts & sheet config
   useEffect(() => {
-    // Load local contracts
     const storedContracts = getStoredContracts();
     setContracts(storedContracts);
 
-    // Load local sheet config
     const storedConfig = getStoredSheetConfig();
     setSheetConfig(storedConfig);
-
-    // Listen to Firebase Auth state
-    const unsubscribe = initAuth(
-      (currentUser, token) => {
-        setUser(currentUser);
-        if (token) {
-          setAccessToken(token);
-        }
-      },
-      () => {
-        setUser(null);
-        setAccessToken(null);
-      }
-    );
-
-    return () => unsubscribe();
   }, []);
 
   // Show auto-dismiss notification
@@ -84,40 +55,7 @@ export default function App() {
     }, durationMs);
   };
 
-  // Google Sign-In
-  const handleLogin = async () => {
-    setIsLoggingIn(true);
-    try {
-      const result = await googleSignIn();
-      if (result) {
-        setUser(result.user);
-        setAccessToken(result.accessToken);
-        triggerNotification(
-          'success',
-          `Đăng nhập Google thành công: ${result.user.displayName || result.user.email}`
-        );
-      }
-    } catch (err: any) {
-      console.error('Lỗi đăng nhập:', err);
-      triggerNotification('error', `Đăng nhập không thành công: ${err.message || 'Lỗi cửa sổ đăng nhập'}`);
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
-
-  // Logout
-  const handleLogout = async () => {
-    try {
-      await logout();
-      setUser(null);
-      setAccessToken(null);
-      triggerNotification('success', 'Đã đăng xuất tài khoản Google.');
-    } catch (err: any) {
-      console.error('Lỗi đăng xuất:', err);
-    }
-  };
-
-  // Save new or updated Contract
+  // Save new or updated Contract & automatically send to Google Sheet webhook
   const handleSaveContract = async (
     contract: AuditContract
   ): Promise<{ success: boolean; sheetError?: string }> => {
@@ -130,46 +68,32 @@ export default function App() {
       let sheetSyncSucceeded = false;
       let sheetErrorMessage: string | undefined;
 
-      // 2. Check if Google Sheet is configured
-      if (sheetConfig && sheetConfig.spreadsheetId) {
-        let currentToken = accessToken;
-        if (!currentToken) {
-          currentToken = await getAccessToken();
-        }
+      // 2. Automatically send to Google Sheet webhook if configured (ZERO login needed!)
+      if (sheetConfig && sheetConfig.webhookUrl) {
+        const syncRes = await sendContractToSheetWebhook(
+          sheetConfig.webhookUrl,
+          contract
+        );
 
-        if (currentToken) {
-          const syncRes = await syncContractToGoogleSheet(
-            currentToken,
-            sheetConfig,
-            contract
+        if (syncRes.success) {
+          sheetSyncSucceeded = true;
+          const syncedList = markContractSynced(contract.id, true);
+          setContracts(syncedList);
+          triggerNotification(
+            'success',
+            `Hợp đồng ${contract.contractNumber} đã được lưu và tự động cập nhật vào Google Sheet của bạn!`
           );
-
-          if (syncRes.success) {
-            sheetSyncSucceeded = true;
-            const syncedList = markContractSynced(contract.id, true);
-            setContracts(syncedList);
-            triggerNotification(
-              'success',
-              `Hợp đồng ${contract.contractNumber} đã được lưu và tự động cập nhật vào Google Sheet!`
-            );
-          } else {
-            sheetErrorMessage = syncRes.error;
-            triggerNotification(
-              'warning',
-              `Đã lưu trên máy, nhưng chưa thể ghi Google Sheet: ${syncRes.error}`
-            );
-          }
         } else {
-          sheetErrorMessage = 'Chưa đăng nhập Google để tự động cập nhật bảng tính.';
+          sheetErrorMessage = syncRes.error;
           triggerNotification(
             'warning',
-            `Đã lưu trên máy. Hãy bấm "Kết nối Google" để tự động đồng bộ vào Google Sheet.`
+            `Đã lưu trên máy. Chưa thể ghi về Sheet: ${syncRes.error}`
           );
         }
       } else {
         triggerNotification(
           'success',
-          `Hợp đồng ${contract.contractNumber} đã lưu thành công trên máy tính.`
+          `Hợp đồng ${contract.contractNumber} đã lưu thành công! (Chưa cài đặt Webhook Google Sheet để đồng bộ đám mây)`
         );
       }
 
@@ -190,27 +114,23 @@ export default function App() {
   const handleSyncSingleContract = async (
     contract: AuditContract
   ): Promise<{ success: boolean; error?: string }> => {
-    if (!sheetConfig) {
+    if (!sheetConfig || !sheetConfig.webhookUrl) {
       setIsSheetModalOpen(true);
-      return { success: false, error: 'Chưa cấu hình file Google Sheet.' };
-    }
-
-    let currentToken = accessToken;
-    if (!currentToken) {
-      currentToken = await getAccessToken();
-    }
-
-    if (!currentToken) {
-      setIsSheetModalOpen(true);
-      return { success: false, error: 'Vui lòng đăng nhập Google để đồng bộ.' };
+      return {
+        success: false,
+        error: 'Chưa cấu hình Webhook Google Sheet. Vui lòng dán link trong mục Cài Đặt Google Sheet.',
+      };
     }
 
     try {
-      const res = await syncContractToGoogleSheet(currentToken, sheetConfig, contract);
+      const res = await sendContractToSheetWebhook(sheetConfig.webhookUrl, contract);
       if (res.success) {
         const updated = markContractSynced(contract.id, true);
         setContracts(updated);
-        triggerNotification('success', `Đã đồng bộ HĐ ${contract.contractNumber} lên Google Sheet!`);
+        triggerNotification(
+          'success',
+          `Đã gửi thành công HĐ ${contract.contractNumber} về Google Sheet của bạn!`
+        );
         return { success: true };
       } else {
         triggerNotification('error', `Lỗi đồng bộ: ${res.error}`);
@@ -225,7 +145,7 @@ export default function App() {
   const handleDeleteContract = (id: string) => {
     const updated = deleteContract(id);
     setContracts(updated);
-    triggerNotification('success', 'Đã xóa hợp đồng khỏi hệ thống.');
+    triggerNotification('success', 'Đã xóa hợp đồng khỏi danh sách.');
   };
 
   // Batch Mark Synced
@@ -261,12 +181,8 @@ export default function App() {
             setActiveTab(tab);
           }
         }}
-        user={user}
         sheetConfig={sheetConfig}
         contractsCount={contracts.length}
-        onLogin={handleLogin}
-        onLogout={handleLogout}
-        isLoggingIn={isLoggingIn}
       />
 
       {/* Floating Notifications */}
@@ -299,7 +215,7 @@ export default function App() {
           <ContractForm
             onSaveContract={handleSaveContract}
             isSyncing={isSyncing}
-            sheetConfigured={!!sheetConfig}
+            sheetConfigured={!!(sheetConfig && sheetConfig.webhookUrl)}
             onOpenSheetConfig={() => setIsSheetModalOpen(true)}
           />
         )}
@@ -327,17 +243,13 @@ export default function App() {
         />
       )}
 
-      {/* Google Sheet Settings Modal */}
+      {/* Google Sheet Settings Modal (Zero-login webhook setup) */}
       {isSheetModalOpen && (
         <GoogleSheetSettingsModal
-          user={user}
-          accessToken={accessToken}
           sheetConfig={sheetConfig}
           contracts={contracts}
           onSaveConfig={handleSaveSheetConfig}
-          onLogin={handleLogin}
           onClose={() => setIsSheetModalOpen(false)}
-          isLoggingIn={isLoggingIn}
           onMarkSyncedBatch={handleMarkSyncedBatch}
         />
       )}
@@ -351,9 +263,9 @@ export default function App() {
             <span>Phiên bản doanh nghiệp 2026</span>
           </div>
           <div className="flex items-center gap-4 text-slate-400">
-            <span>Hệ thống phân công & kiểm soát tỷ lệ nhóm 100%</span>
+            <span>Tự động lưu về Google Sheet riêng (Không cần đăng nhập)</span>
             <span>•</span>
-            <span>Tự động đồng bộ Google Sheets</span>
+            <span>Phân công nhóm tỷ lệ chuẩn 100%</span>
           </div>
         </div>
       </footer>

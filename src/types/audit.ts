@@ -117,9 +117,10 @@ export interface AuditContract {
 }
 
 export interface GoogleSheetConfig {
-  spreadsheetId: string;
+  webhookUrl: string; // Google Apps Script Web App URL (no login needed)
+  spreadsheetUrl: string; // Link to view Google Sheet
+  spreadsheetId?: string; // Optional raw ID
   spreadsheetName: string;
-  spreadsheetUrl: string;
   contractSheetName: string;
   teamSheetName: string;
   autoSync: boolean;

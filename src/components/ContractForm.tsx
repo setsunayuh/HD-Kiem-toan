@@ -16,13 +16,9 @@ import {
   AlertTriangle,
   Plus,
   Trash2,
-  FileCheck2,
   Building2,
   Calendar,
   FileSpreadsheet,
-  HelpCircle,
-  Sparkles,
-  ArrowRight,
   ShieldCheck,
   UserCheck,
   Percent,
@@ -116,7 +112,6 @@ export const ContractForm: React.FC<ContractFormProps> = ({
   // Helper for contract number formatting "000/0000"
   const handleContractNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let val = e.target.value.replace(/[^\d/]/g, '');
-    // If user types digits without slash, auto-insert slash after 3 digits
     if (/^\d{4,}$/.test(val) && !val.includes('/')) {
       val = val.slice(0, 3) + '/' + val.slice(3, 7);
     }
@@ -162,7 +157,6 @@ export const ContractForm: React.FC<ContractFormProps> = ({
     if (nextIdx === 0) defaultPos = 'Nhóm trưởng';
     else if (nextIdx === 1) defaultPos = 'Trợ lý 1';
 
-    // Calculate remaining percent
     const remaining = Math.max(0, 100 - totalPercentage);
 
     const newRow: TeamMemberExecution = {
@@ -247,7 +241,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
   const validateForm = (): string[] => {
     const errs: string[] = [];
 
-    // 1. Mã khách hàng: ghi đầy đủ tối đa gồm 5 chữ số
+    // 1. Mã khách hàng: tối đa 5 chữ số
     if (!customerCode.trim()) {
       errs.push('Mã khách hàng: Chưa nhập (tối đa 5 chữ số, ví dụ 00128).');
     } else if (!/^\d{1,5}$/.test(customerCode.trim())) {
@@ -259,7 +253,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
       errs.push('Tên khách hàng: Chưa nhập.');
     }
 
-    // 3. Số hợp đồng: mẫu "000/0000" (3 số đầu là số HĐ, 4 số sau là năm)
+    // 3. Số hợp đồng: mẫu "000/0000"
     if (!contractNumber.trim()) {
       errs.push('Số hợp đồng: Chưa nhập.');
     } else if (!/^\d{3}\/\d{4}$/.test(contractNumber.trim())) {
@@ -344,7 +338,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         }
       });
 
-      // Crucial requirement: tổng % sau khi nhập hết từng dòng phải bằng 100%
+      // Bắt buộc tổng % bằng 100%
       if (totalPercentage !== 100) {
         errs.push(
           `Tỷ lệ thực hiện: Tổng % của nhóm hiện tại là ${totalPercentage}%. Yêu cầu bắt buộc tổng % phải đúng bằng 100% (đang ${
@@ -414,31 +408,31 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-gradient-to-l from-indigo-500/10 to-transparent pointer-events-none" />
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
           <div>
-            <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs tracking-wider uppercase mb-1">
+            <div className="flex items-center gap-2 text-teal-400 font-semibold text-xs tracking-wider uppercase mb-1">
               <ShieldCheck className="w-4 h-4" />
-              Quy Trình Kiểm Soát Hợp Đồng Kiểm Toán
+              Tự Động Lưu Về Google Sheet Riêng • Không Cần Đăng Nhập
             </div>
             <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
               Biểu Mẫu Nhập Hợp Đồng & Phân Công Nhóm
             </h2>
             <p className="text-slate-300 text-xs sm:text-sm mt-1">
-              Nhập đầy đủ thông tin hợp đồng, kiểm toán viên và bảng tỷ lệ thực hiện (đảm bảo tổng 100%) để lưu và tự động cập nhật Google Sheets.
+              Nhân viên chỉ cần mở trang web, nhập đầy đủ thông tin hợp đồng và phân bổ tỷ lệ nhóm (tổng 100%), bấm OK sẽ tự động gửi thẳng về file Google Sheet của bạn.
             </p>
           </div>
           <div className="flex items-center gap-2">
             {sheetConfigured ? (
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 text-xs font-medium">
                 <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                <span>Google Sheet đã sẵn sàng</span>
+                <span>Google Sheet Đã Kết Nối</span>
               </div>
             ) : (
               <button
                 type="button"
                 onClick={onOpenSheetConfig}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium transition-all shadow-md shadow-indigo-600/30"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/30 cursor-pointer"
               >
                 <FileSpreadsheet className="w-4 h-4" />
-                <span>Thiết lập Google Sheet</span>
+                <span>Cài Đặt Link Google Sheet</span>
               </button>
             )}
           </div>
@@ -481,7 +475,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   <button
                     type="button"
                     onClick={padCustomerCode}
-                    className="text-[11px] text-blue-600 hover:text-blue-800 underline font-medium"
+                    className="text-[11px] text-blue-600 hover:text-blue-800 underline font-medium cursor-pointer"
                     title="Đệm số 0 vào trước cho đủ 5 số"
                   >
                     Đệm 5 số
@@ -548,7 +542,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 <button
                   type="button"
                   onClick={() => setToday(setContractDate)}
-                  className="text-[11px] text-blue-600 hover:text-blue-800 font-medium"
+                  className="text-[11px] text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
                 >
                   Hôm nay
                 </button>
@@ -629,7 +623,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       key={preset}
                       type="button"
                       onClick={() => setReportPeriod(preset)}
-                      className="text-[11px] px-1.5 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded"
+                      className="text-[11px] px-1.5 py-0.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded cursor-pointer"
                     >
                       {preset}
                     </button>
@@ -670,7 +664,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 <button
                   type="button"
                   onClick={() => setToday(setReportDate)}
-                  className="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium"
+                  className="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium cursor-pointer"
                 >
                   Hôm nay
                 </button>
@@ -729,7 +723,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       value={name}
                       checked={boardMember === name}
                       onChange={() => setBoardMember(name)}
-                      className="text-teal-600 focus:ring-teal-500 w-4 h-4"
+                      className="text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer"
                     />
                     <span className="text-sm">{name}</span>
                   </label>
@@ -774,7 +768,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       value={name}
                       checked={auditor === name}
                       onChange={() => setAuditor(name)}
-                      className="text-blue-600 focus:ring-blue-500 w-4 h-4"
+                      className="text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer"
                     />
                     <span className="text-sm">{name}</span>
                   </label>
@@ -819,7 +813,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={opinion}
                     checked={auditOpinion === opinion}
                     onChange={() => setAuditOpinion(opinion)}
-                    className="text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                    className="text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
                   />
                   <span className="text-xs sm:text-sm text-left">{opinion}</span>
                 </label>
@@ -838,7 +832,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   type="checkbox"
                   checked={otherMatters}
                   onChange={(e) => setOtherMatters(e.target.checked)}
-                  className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                  className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
                 />
                 <span className="text-sm font-medium text-slate-700">Vấn đề khác</span>
               </label>
@@ -848,7 +842,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   type="checkbox"
                   checked={emphasisOfMatter}
                   onChange={(e) => setEmphasisOfMatter(e.target.checked)}
-                  className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                  className="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4 cursor-pointer"
                 />
                 <span className="text-sm font-medium text-slate-700">Nhấn mạnh</span>
               </label>
@@ -908,7 +902,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <button
                 type="button"
                 onClick={handleAutoBalance}
-                className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium transition-colors"
+                className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium transition-colors cursor-pointer"
                 title="Tự động chia đều cho các thành viên để tổng đủ 100%"
               >
                 Cân đối 100%
@@ -938,17 +932,15 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
                     {/* Vị trí */}
                     <td className="py-2.5 px-3">
-                      <div className="flex items-center gap-1.5">
-                        <input
-                          type="text"
-                          value={member.position}
-                          onChange={(e) =>
-                            handleUpdateTeamRow(member.id, 'position', e.target.value)
-                          }
-                          placeholder="Nhóm trưởng, Trợ lý..."
-                          className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 focus:ring-1 focus:ring-indigo-500 text-sm"
-                        />
-                      </div>
+                      <input
+                        type="text"
+                        value={member.position}
+                        onChange={(e) =>
+                          handleUpdateTeamRow(member.id, 'position', e.target.value)
+                        }
+                        placeholder="Nhóm trưởng, Trợ lý..."
+                        className="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 focus:ring-1 focus:ring-indigo-500 text-sm"
+                      />
                     </td>
 
                     {/* Tên (Sổ xuống) */}
@@ -1014,7 +1006,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       <button
                         type="button"
                         onClick={() => handleRemoveTeamRow(member.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                         title="Xóa thành viên này"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1052,7 +1044,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <button
               type="button"
               onClick={handleAddTeamRow}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition-all shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition-all shadow-sm cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>Thêm Thành Viên Vào Nhóm</span>
@@ -1069,7 +1061,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         <div className="sticky bottom-4 z-30 bg-slate-900/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-slate-800 text-white shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-left w-full sm:w-auto">
             <div className="text-xs text-slate-400">
-              Kiểm tra toàn bộ thông tin hợp đồng & nhóm kiểm toán trước khi lưu
+              Kiểm tra toàn bộ thông tin hợp đồng & nhóm kiểm toán trước khi bấm OK
             </div>
             <div className="text-sm font-semibold text-slate-200 flex items-center gap-2 mt-0.5">
               <span>Trạng thái:</span>
@@ -1089,12 +1081,12 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <button
               type="button"
               onClick={handleResetForm}
-              className="px-4 py-3 rounded-xl border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 text-sm font-medium transition-colors"
+              className="px-4 py-3 rounded-xl border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 text-sm font-medium transition-colors cursor-pointer"
             >
               Làm mới biểu mẫu
             </button>
 
-            {/* NÚT OK QUAN TRỌNG THEO YÊU CẦU ĐỀ BÀI */}
+            {/* NÚT OK BẮT BUỘC THEO YÊU CẦU */}
             <button
               type="submit"
               disabled={isSyncing}
@@ -1103,12 +1095,12 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               {isSyncing ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>ĐANG LƯU & ĐỒNG BỘ...</span>
+                  <span>ĐANG LƯU & GỬI VỀ GOOGLE SHEET...</span>
                 </>
               ) : (
                 <>
                   <CheckCircle2 className="w-5 h-5 text-white" />
-                  <span>OK - LƯU & CẬP NHẬT GOOGLE SHEET</span>
+                  <span style={{ fontStyle: 'italic', fontWeight: 'normal', fontSize: '16px' }}>OK</span>
                 </>
               )}
             </button>
@@ -1116,7 +1108,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         </div>
       </form>
 
-      {/* ERROR MODAL (Yêu cầu đề bài: "thiếu một trong các thông tin trên sẽ báo lỗi, yêu cầu phải nhập hết mới được bấm OK") */}
+      {/* ERROR MODAL */}
       {showErrorModal && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-red-200 animate-in fade-in zoom-in-95 duration-150">
@@ -1150,7 +1142,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <button
                 type="button"
                 onClick={() => setShowErrorModal(false)}
-                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-semibold transition-colors"
+                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-semibold transition-colors cursor-pointer"
               >
                 Đã hiểu, quay lại chỉnh sửa
               </button>
@@ -1202,17 +1194,17 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 {sheetSyncResult?.success ? (
                   <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700">
                     <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                    <span>Đã tự động cập nhật dòng vào file Google Sheet của bạn!</span>
+                    <span>Đã tự động gửi dữ liệu về file Google Sheet của bạn!</span>
                   </div>
                 ) : sheetConfigured ? (
                   <div className="text-xs text-amber-700">
                     {sheetSyncResult?.message ||
-                      'Chưa ghi được vào Google Sheet. Bạn có thể bấm "Đồng bộ lại" trong mục Danh Sách Hợp Đồng.'}
+                      'Hợp đồng đã lưu trên máy. Kiểm tra đường link Google Sheet trong phần Cài Đặt.'}
                   </div>
                 ) : (
                   <div className="text-xs text-slate-500 flex items-center gap-1.5">
                     <FileSpreadsheet className="w-4 h-4 text-indigo-500" />
-                    <span>Hợp đồng đã lưu trên máy. Chưa kết nối file Google Sheet để đồng bộ đám mây.</span>
+                    <span>Hợp đồng đã lưu trên hệ thống. Hãy dán link Google Sheet để đồng bộ về file riêng của bạn.</span>
                   </div>
                 )}
               </div>
@@ -1225,14 +1217,14 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   setSaveSuccessContract(null);
                   handleResetForm();
                 }}
-                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition-colors"
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
               >
                 Nhập Hợp Đồng Tiếp Theo
               </button>
               <button
                 type="button"
                 onClick={() => setSaveSuccessContract(null)}
-                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition-colors"
+                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer"
               >
                 Xem Hợp Đồng Vừa Lưu
               </button>

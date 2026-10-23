@@ -216,7 +216,7 @@ export async function syncContractToGoogleSheet(
     // Append to contracts sheet
     await appendValuesToSheet(
       accessToken,
-      config.spreadsheetId,
+      config.spreadsheetId || '',
       config.contractSheetName || DEFAULT_SHEET_NAMES.contracts,
       [contractRow]
     );
@@ -225,7 +225,7 @@ export async function syncContractToGoogleSheet(
     if (teamRows.length > 0) {
       await appendValuesToSheet(
         accessToken,
-        config.spreadsheetId,
+        config.spreadsheetId || '',
         config.teamSheetName || DEFAULT_SHEET_NAMES.team,
         teamRows
       );
