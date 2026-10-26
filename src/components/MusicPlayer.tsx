@@ -17,7 +17,7 @@ interface MusicPlayerProps {
 }
 
 export const MusicPlayer: React.FC<MusicPlayerProps> = ({
-  videoId = 'DCmLhoK3j0Y',
+  videoId = 'y70kmGVY2tA',
 }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(false);

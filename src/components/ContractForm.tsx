@@ -282,7 +282,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
     // 6. Loại báo cáo
     if (!reportType) {
-      errs.push('Loại báo cáo: Chưa chọn loại báo cáo (Riêng, Hợp nhất, Khác).');
+      errs.push('Loại báo cáo: Chưa chọn loại báo cáo (Riêng, Hợp nhất, Tổng hợp, Khác).');
     } else if (reportType === 'Khác' && !reportTypeOther.trim()) {
       errs.push('Loại báo cáo: Đang chọn "Khác" nhưng chưa điền chi tiết loại báo cáo.');
     }
@@ -301,7 +301,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
     // 9. Số báo cáo
     if (!reportNumber.trim()) {
-      errs.push('Số báo cáo: Chưa nhập.');
+      errs.push('Số báo cáo: Chưa nhập đầy đủ. Lưu ý lấy thông tin theo ý kiến kiểm toán (Ví dụ: 251/2026/BCKT-HCM.00070).');
     }
 
     // 10. Ngày báo cáo: dd/mm/yyyy
@@ -621,7 +621,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               )}
             </div>
 
-            {/* 2. Loại báo cáo (Riêng, Hợp nhất, Khác) */}
+            {/* 2. Loại báo cáo (Riêng, Hợp nhất, Tổng hợp, Khác) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
@@ -629,7 +629,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   Loại báo cáo <span className="text-orange-600">*</span>
                 </label>
                 <span className="text-[10px] text-purple-700 bg-purple-100 px-2 py-0.5 rounded font-bold border border-purple-200">
-                  Riêng / Hợp nhất
+                  Riêng / Hợp nhất / Tổng hợp
                 </span>
               </div>
               <select
@@ -742,18 +742,40 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
           {/* Dòng Số báo cáo & Ngày báo cáo */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 pt-5 border-t border-purple-100">
-            {/* Số báo cáo */}
+            {/* Số báo cáo: Nhập đầy đủ. Lưu ý: Lấy thông tin theo ý kiến kiểm toán. Ví dụ: 251/2026/BCKT-HCM.00070 */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-slate-800 mb-1.5">
-                Số báo cáo <span className="text-orange-600">*</span>
-              </label>
+              <div className="flex flex-wrap items-center justify-between mb-1.5 gap-2">
+                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                  Số báo cáo <span className="text-orange-600">*</span>
+                  <span className="text-xs font-normal text-slate-500">(nhập đầy đủ theo ý kiến kiểm toán)</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const num = contractNumber ? contractNumber.split('/')[0] : '251';
+                    const yr = contractNumber && contractNumber.includes('/') ? contractNumber.split('/')[1] : currentYear;
+                    const code = customerCode ? customerCode.padStart(5, '0') : '00070';
+                    setReportNumber(`${num}/${yr}/BCKT-HCM.${code}`);
+                  }}
+                  className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 font-bold transition-colors cursor-pointer"
+                  title="Gợi ý số báo cáo chuẩn theo ý kiến kiểm toán"
+                >
+                  ⚡ Gợi ý: {contractNumber ? contractNumber.split('/')[0] : '251'}/{contractNumber && contractNumber.includes('/') ? contractNumber.split('/')[1] : currentYear}/BCKT-HCM.{customerCode ? customerCode.padStart(5, '0') : '00070'}
+                </button>
+              </div>
               <input
                 type="text"
                 value={reportNumber}
                 onChange={(e) => setReportNumber(e.target.value)}
-                placeholder="VD: BCKT-086/2026 hoặc 086/BCKT"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all"
+                placeholder="Ví dụ: 251/2026/BCKT-HCM.00070"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wide transition-all font-semibold"
               />
+              <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+                <Info className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
+                <span>
+                  Lưu ý: Lấy thông tin theo ý kiến kiểm toán. Ví dụ: <strong className="text-slate-800 font-mono">251/2026/BCKT-HCM.00070</strong>
+                </span>
+              </p>
             </div>
 
             {/* Ngày báo cáo */}

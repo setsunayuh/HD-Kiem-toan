@@ -46,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Section: Background Music Player */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <MusicPlayer videoId="DCmLhoK3j0Y" />
+            <MusicPlayer videoId="y70kmGVY2tA" />
           </div>
         </div>
 

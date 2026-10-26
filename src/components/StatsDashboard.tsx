@@ -217,6 +217,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ contracts }) => 
             {reportTypeStats.map((item) => {
               let barGrad = 'from-purple-500 to-indigo-600';
               if (item.name === 'Riêng') barGrad = 'from-orange-500 to-amber-500';
+              if (item.name === 'Tổng hợp') barGrad = 'from-blue-500 to-cyan-500';
               if (item.name === 'Khác') barGrad = 'from-pink-500 to-rose-500';
 
               return (

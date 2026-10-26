@@ -190,7 +190,12 @@ export default function App() {
             <span>•</span>
             <span className="font-medium">Mùa Kiểm Toán 2026 🎃🦇</span>
           </div>
-          <div className="flex items-center gap-4 text-slate-500 font-medium">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-slate-500 font-medium">
+            <span className="font-extrabold text-orange-700 italic flex items-center gap-1.5 bg-orange-100/70 border border-orange-200 px-2.5 py-1 rounded-lg">
+              <span>🎃</span>
+              <span>&ldquo;Đi làm đừng đi lầm&rdquo;</span>
+            </span>
+            <span>•</span>
             <span>Tự động lưu về Google Sheet riêng của bạn 👻</span>
             <span>•</span>
             <span>Phân công nhóm tỷ lệ chuẩn 100% 🍬</span>

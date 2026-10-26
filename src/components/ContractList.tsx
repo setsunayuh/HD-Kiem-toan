@@ -97,6 +97,8 @@ export const ContractList: React.FC<ContractListProps> = ({
     switch (type) {
       case 'Hợp nhất':
         return 'bg-purple-50 text-purple-800 border-purple-200';
+      case 'Tổng hợp':
+        return 'bg-blue-50 text-blue-800 border-blue-200';
       case 'Khác':
         return 'bg-pink-50 text-pink-800 border-pink-200';
       case 'Riêng':
@@ -181,6 +183,7 @@ export const ContractList: React.FC<ContractListProps> = ({
             <option value="ALL">Tất cả loại BC</option>
             <option value="Riêng">Báo cáo Riêng</option>
             <option value="Hợp nhất">Báo cáo Hợp nhất</option>
+            <option value="Tổng hợp">Báo cáo Tổng hợp</option>
             <option value="Khác">Loại báo cáo Khác</option>
           </select>
         </div>
@@ -326,33 +329,34 @@ export const ContractList: React.FC<ContractListProps> = ({
                       <Eye className="w-4 h-4" />
                     </button>
 
-                    {/* Google Sheet Sync */}
-                    <button
-                      type="button"
-                      onClick={() => handleSync(contract)}
-                      disabled={isSyncingThis}
-                      className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer ${
-                        contract.syncedToGoogleSheet
-                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300 hover:bg-emerald-100'
-                          : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
-                      }`}
-                      title={
-                        contract.syncedToGoogleSheet
-                          ? `Đã đồng bộ lên Sheet lúc ${contract.syncedAt || ''}`
-                          : 'Đồng bộ dòng này lên Google Sheet'
-                      }
-                    >
-                      {isSyncingThis ? (
-                        <div className="w-3.5 h-3.5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <FileSpreadsheet
-                          className={`w-3.5 h-3.5 ${
-                            contract.syncedToGoogleSheet ? 'text-emerald-600' : 'text-slate-500'
-                          }`}
-                        />
-                      )}
-                      <span>{contract.syncedToGoogleSheet ? 'Đã lên Sheet 🎃' : 'Đồng bộ Sheet'}</span>
-                    </button>
+                    {/* Google Sheet Sync - Disabled when already synced to avoid duplicate submissions */}
+                    {contract.syncedToGoogleSheet ? (
+                      <button
+                        type="button"
+                        disabled={true}
+                        aria-disabled="true"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border bg-emerald-50 text-emerald-800 border-emerald-300 opacity-90 cursor-not-allowed select-none shadow-2xs"
+                        title="Đã đồng bộ lên Google Sheet (Nút bị khóa để tránh gửi thông tin trùng lặp)"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                        <span>Đã đồng bộ Google Sheet 🎃</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleSync(contract)}
+                        disabled={isSyncingThis}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold border transition-colors cursor-pointer bg-white text-slate-700 border-slate-300 hover:bg-slate-50 shadow-2xs"
+                        title="Đồng bộ dòng này lên Google Sheet"
+                      >
+                        {isSyncingThis ? (
+                          <div className="w-3.5 h-3.5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <FileSpreadsheet className="w-3.5 h-3.5 text-slate-500" />
+                        )}
+                        <span>Đồng bộ Sheet</span>
+                      </button>
+                    )}
 
                     {/* Toggle breakdown table */}
                     <button

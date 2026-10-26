@@ -7,11 +7,12 @@ export const SERVICE_OPTIONS: ServiceType[] = [
   'Khác',
 ];
 
-export type ReportType = 'Riêng' | 'Hợp nhất' | 'Khác';
+export type ReportType = 'Riêng' | 'Hợp nhất' | 'Tổng hợp' | 'Khác';
 
 export const REPORT_TYPE_OPTIONS: ReportType[] = [
   'Riêng',
   'Hợp nhất',
+  'Tổng hợp',
   'Khác',
 ];
 
@@ -63,7 +64,7 @@ export const TEAM_MEMBERS = [
   'Trung Kiên',
 ] as const;
 
-// Bổ sung Q, phân F thành "F tiền", "F vay"
+// Danh sách phần hành: Q, F tiền, F vay, Khác...
 export const AUDIT_SECTIONS = [
   'Báo cáo',
   'IFRS',
@@ -84,6 +85,7 @@ export const AUDIT_SECTIONS = [
   'R',
   'S',
   'T',
+  'Khác',
 ] as const;
 
 export interface TeamMemberExecution {

@@ -61,6 +61,10 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
     onChange(combined.join(', '));
   };
 
+  const selectAll = () => {
+    onChange(Array.from(AUDIT_SECTIONS).join(', '));
+  };
+
   return (
     <div ref={containerRef} className="relative w-full">
       {/* Trigger Box */}
@@ -116,25 +120,44 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
           <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-orange-100">
             <span className="text-xs font-bold text-orange-700 uppercase tracking-wider flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              🎃 Chọn Phần Hành ({selectedSections.length} đã chọn)
+              🎃 Chọn Phần Hành ({selectedSections.length}/{AUDIT_SECTIONS.length})
             </span>
-            {selectedSections.length > 0 && (
+            <div className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={clearAll}
-                className="text-[11px] text-orange-600 hover:text-orange-700 hover:underline font-bold cursor-pointer"
+                onClick={selectAll}
+                className="text-[11px] text-orange-600 hover:text-orange-700 hover:underline font-extrabold cursor-pointer"
               >
-                Bỏ chọn hết
+                + Chọn hết
               </button>
-            )}
+              {selectedSections.length > 0 && (
+                <>
+                  <span className="text-slate-300">|</span>
+                  <button
+                    type="button"
+                    onClick={clearAll}
+                    className="text-[11px] text-slate-500 hover:text-red-600 hover:underline font-bold cursor-pointer"
+                  >
+                    Bỏ chọn hết
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
-          {/* Quick Select Buttons */}
+          {/* Quick Select Buttons including + Tất cả button */}
           <div className="flex flex-wrap gap-1.5 mb-3">
             <button
               type="button"
+              onClick={selectAll}
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-extrabold transition-colors cursor-pointer shadow-xs"
+            >
+              + Tất cả ({AUDIT_SECTIONS.length})
+            </button>
+            <button
+              type="button"
               onClick={() => selectGroup(['Báo cáo', 'IFRS'])}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 font-semibold transition-colors cursor-pointer"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-semibold transition-colors cursor-pointer"
             >
               + Báo cáo, IFRS
             </button>
@@ -148,24 +171,30 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
             <button
               type="button"
               onClick={() => selectGroup(['F tiền', 'F vay'])}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold transition-colors cursor-pointer"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-medium transition-colors cursor-pointer"
             >
               + F tiền, F vay
             </button>
             <button
               type="button"
               onClick={() => selectGroup(['Q', 'P', 'R'])}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 font-bold transition-colors cursor-pointer"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-medium transition-colors cursor-pointer"
             >
               + Q, P, R
             </button>
+            <button
+              type="button"
+              onClick={() => selectGroup(['Khác'])}
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-medium transition-colors cursor-pointer"
+            >
+              + Khác
+            </button>
           </div>
 
-          {/* Grid of Sections */}
+          {/* Grid of Sections - Uniform clean styling, F tien, F vay, Q have SAME color */}
           <div className="grid grid-cols-3 gap-1.5 max-h-56 overflow-y-auto pr-1 scrollbar-thin">
             {AUDIT_SECTIONS.map((sec) => {
               const isSelected = selectedSections.includes(sec);
-              const isHighlight = sec === 'F tiền' || sec === 'F vay' || sec === 'Q';
               return (
                 <button
                   key={sec}
@@ -174,8 +203,6 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
                   className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
                     isSelected
                       ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold shadow-sm shadow-orange-500/30'
-                      : isHighlight
-                      ? 'bg-orange-50/80 hover:bg-orange-100 text-orange-900 border border-orange-300 font-semibold'
                       : 'bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200'
                   }`}
                 >
