@@ -1,5 +1,5 @@
 import { AuditContract, GoogleSheetConfig } from '../types/audit';
-import { DEFAULT_SHEET_NAMES } from './googleSheetsService';
+import { DEFAULT_SHEET_NAMES } from './googleSheetsWebhook';
 
 const CONTRACTS_STORAGE_KEY = 'audit_contracts_v1';
 const SHEET_CONFIG_STORAGE_KEY = 'audit_google_sheet_config_v1';
@@ -12,7 +12,8 @@ const INITIAL_SAMPLE_CONTRACTS: AuditContract[] = [
     contractNumber: '086/2026',
     contractDate: '15/01/2026',
     service: 'Kiểm toán',
-    reportPeriod: '31/12',
+    reportType: 'Riêng',
+    reportPeriod: '31/12/2025',
     reportNumber: 'BCKT-086/2026',
     reportDate: '15/03/2026',
     boardMember: 'Bùi Tuyết Vân',
@@ -42,14 +43,14 @@ const INITIAL_SAMPLE_CONTRACTS: AuditContract[] = [
         id: 'tm-3',
         position: 'Trợ lý 2',
         name: 'Nhật Huy',
-        section: 'C, D',
+        section: 'F tiền, F vay',
         percentage: 20,
       },
       {
         id: 'tm-4',
         position: 'Trợ lý 3',
         name: 'Trường Xuân',
-        section: 'C',
+        section: 'Q, R',
         percentage: 20,
       },
     ],
@@ -60,11 +61,12 @@ const INITIAL_SAMPLE_CONTRACTS: AuditContract[] = [
   {
     id: 'sample-002',
     customerCode: '04592',
-    customerName: 'Công ty TNHH Xuất Nhập Khẩu Rồng Á Đông',
+    customerName: 'Tập đoàn Xuất Nhập Khẩu Rồng Á Đông',
     contractNumber: '112/2026',
     contractDate: '20/02/2026',
     service: 'Soát xét',
-    reportPeriod: '30/06',
+    reportType: 'Hợp nhất',
+    reportPeriod: '30/06/2026',
     reportNumber: 'SX-112/2026',
     reportDate: '25/08/2026',
     boardMember: 'Trang Đắc Nha',
@@ -80,21 +82,21 @@ const INITIAL_SAMPLE_CONTRACTS: AuditContract[] = [
         id: 'tm-5',
         position: 'Nhóm trưởng',
         name: 'Nhật Huy',
-        section: 'Báo cáo',
+        section: 'Báo cáo, IFRS',
         percentage: 40,
       },
       {
         id: 'tm-6',
         position: 'Trợ lý 1',
         name: 'Minh Lai',
-        section: 'IFRS',
+        section: 'F tiền, Q',
         percentage: 30,
       },
       {
         id: 'tm-7',
         position: 'Trợ lý 2',
         name: 'Mỹ Hoa',
-        section: 'AP-AC',
+        section: 'AP-AC, C',
         percentage: 30,
       },
     ],
@@ -108,11 +110,15 @@ export function getStoredContracts(): AuditContract[] {
   try {
     const raw = localStorage.getItem(CONTRACTS_STORAGE_KEY);
     if (!raw) {
-      // Seed initial samples
       localStorage.setItem(CONTRACTS_STORAGE_KEY, JSON.stringify(INITIAL_SAMPLE_CONTRACTS));
       return INITIAL_SAMPLE_CONTRACTS;
     }
-    return JSON.parse(raw);
+    const parsed: AuditContract[] = JSON.parse(raw);
+    // Ensure all records have reportType
+    return parsed.map((c) => ({
+      ...c,
+      reportType: c.reportType || 'Riêng',
+    }));
   } catch (err) {
     console.error('Lỗi đọc danh sách hợp đồng:', err);
     return INITIAL_SAMPLE_CONTRACTS;
@@ -178,6 +184,7 @@ export function exportContractsToCSV(contracts: AuditContract[]): void {
     'Số Hợp Đồng',
     'Ngày Hợp Đồng',
     'Dịch Vụ',
+    'Loại Báo Cáo',
     'Kỳ Báo Cáo',
     'Số Báo Cáo',
     'Ngày Báo Cáo',
@@ -193,6 +200,7 @@ export function exportContractsToCSV(contracts: AuditContract[]): void {
   const rows = contracts.map((c) => {
     const bgd = c.boardMember === 'Khác' ? `Khác: ${c.boardMemberOther || ''}` : c.boardMember;
     const ktv = c.auditor === 'Khác' ? `Khác: ${c.auditorOther || ''}` : c.auditor;
+    const reportTypeVal = c.reportType === 'Khác' ? `Khác: ${c.reportTypeOther || ''}` : (c.reportType || 'Riêng');
     const additional: string[] = [];
     if (c.additionalOpinions.emphasisOfMatter) additional.push('Nhấn mạnh');
     if (c.additionalOpinions.otherMatters) additional.push('Vấn đề khác');
@@ -207,6 +215,7 @@ export function exportContractsToCSV(contracts: AuditContract[]): void {
       `"${c.contractNumber}"`,
       `"${c.contractDate}"`,
       `"${c.service === 'Khác' ? c.serviceOther || 'Khác' : c.service}"`,
+      `"${reportTypeVal}"`,
       `"${c.reportPeriod}"`,
       `"${c.reportNumber.replace(/"/g, '""')}"`,
       `"${c.reportDate}"`,

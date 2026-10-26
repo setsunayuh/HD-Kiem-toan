@@ -7,6 +7,14 @@ export const SERVICE_OPTIONS: ServiceType[] = [
   'Khác',
 ];
 
+export type ReportType = 'Riêng' | 'Hợp nhất' | 'Khác';
+
+export const REPORT_TYPE_OPTIONS: ReportType[] = [
+  'Riêng',
+  'Hợp nhất',
+  'Khác',
+];
+
 export const BOARD_MEMBERS = [
   'Bùi Tuyết Vân',
   'Nguyễn Ngọc Thùy Dung',
@@ -48,6 +56,7 @@ export const TEAM_MEMBERS = [
   'Trung Kiên',
 ] as const;
 
+// Bổ sung Q, phân F thành "F tiền", "F vay"
 export const AUDIT_SECTIONS = [
   'Báo cáo',
   'IFRS',
@@ -57,12 +66,14 @@ export const AUDIT_SECTIONS = [
   'C',
   'D',
   'E',
-  'F',
+  'F tiền',
+  'F vay',
   'G',
   'H',
   'J',
   'L',
   'P',
+  'Q',
   'R',
   'S',
   'T',
@@ -72,7 +83,7 @@ export interface TeamMemberExecution {
   id: string;
   position: string; // "Nhóm trưởng", "Trợ lý 1", "Trợ lý 2", "Trợ lý 3", etc.
   name: string; // from TEAM_MEMBERS or custom
-  section: string; // from AUDIT_SECTIONS
+  section: string; // Multiple comma-separated sections, e.g. "Báo cáo, IFRS" or "F tiền, F vay, Q"
   percentage: number; // e.g. 40 (meaning 40%)
 }
 
@@ -84,7 +95,9 @@ export interface AuditContract {
   contractDate: string; // dd/mm/yyyy
   service: ServiceType; // Kiểm toán, Soát xét, Báo cáo vốn, Khác
   serviceOther?: string; // If service is Khác
-  reportPeriod: string; // dd/mm
+  reportType: ReportType; // Riêng, Hợp nhất, Khác
+  reportTypeOther?: string; // If reportType is Khác
+  reportPeriod: string; // Mẫu dd/mm/yyyy (Ví dụ: 31/12/2025)
   reportNumber: string; // Số báo cáo
   reportDate: string; // dd/mm/yyyy
   

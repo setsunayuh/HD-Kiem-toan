@@ -14,6 +14,7 @@ export const CONTRACT_HEADERS = [
   'Số Hợp Đồng',
   'Ngày Hợp Đồng',
   'Dịch Vụ',
+  'Loại Báo Cáo',
   'Kỳ Báo Cáo',
   'Số Báo Cáo',
   'Ngày Báo Cáo',
@@ -44,14 +45,6 @@ export const TEAM_HEADERS = [
  */
 export const RECOMMENDED_APPS_SCRIPT_CODE = `/**
  * MÃ GOOGLE APPS SCRIPT CHUẨN - TỰ ĐỘNG LƯU ĐẦY ĐỦ THÔNG TIN HỢP ĐỒNG & NHÂN SỰ
- *
- * Hướng dẫn cập nhật trong file Google Sheet của bạn:
- * 1. Mở file Google Sheet của bạn
- * 2. Vào menu "Tiện ích mở rộng" (Extensions) -> "Apps Script"
- * 3. Xóa hết code cũ, dán toàn bộ mã này vào và nhấn Lưu (Ctrl + S)
- * 4. Bấm "Triển khai" (Deploy) -> "Quản lý tùy chọn triển khai" (Manage deployments)
- *    -> Bấm biểu tượng cây bút (Chỉnh sửa) -> Chọn Phiên bản: "Phiên bản mới" (New version)
- *    -> Đảm bảo "Ai có quyền truy cập" là "Bất kỳ ai" (Anyone) -> Bấm Triển khai!
  */
 
 function doPost(e) {
@@ -78,6 +71,7 @@ function doPost(e) {
     var soHD = data.contractNumber || data.soHopDong || data["Số Hợp Đồng"] || "";
     var ngayHD = data.contractDate || data.ngayHopDong || data["Ngày Hợp Đồng"] || "";
     var dichVu = data.service || data.dichVu || data["Dịch Vụ"] || "";
+    var loaiBC = data.reportType || data.loaiBaoCao || data["Loại Báo Cáo"] || "";
     var kyBC = data.reportPeriod || data.kyBaoCao || data["Kỳ Báo Cáo"] || "";
     var soBC = data.reportNumber || data.soBaoCao || data["Số Báo Cáo"] || "";
     var ngayBC = data.reportDate || data.ngayBaoCao || data["Ngày Báo Cáo"] || "";
@@ -96,17 +90,17 @@ function doPost(e) {
     if (sheetContracts.getLastRow() === 0) {
       sheetContracts.appendRow([
         "Mã Khách Hàng", "Tên Khách Hàng", "Số Hợp Đồng", "Ngày Hợp Đồng",
-        "Dịch Vụ", "Kỳ Báo Cáo", "Số Báo Cáo", "Ngày Báo Cáo",
+        "Dịch Vụ", "Loại Báo Cáo", "Kỳ Báo Cáo", "Số Báo Cáo", "Ngày Báo Cáo",
         "Thành Viên BGĐ", "Kiểm Toán Viên", "Ý Kiến Kiểm Toán",
         "Thông Tin Bổ Sung", "Lý Do Bổ Sung", "Số Nhân Sự",
         "Tóm Tắt Phân Công", "Thời Gian Lưu"
       ]);
-      sheetContracts.getRange(1, 1, 1, 16).setFontWeight("bold").setBackground("#dbeafe");
+      sheetContracts.getRange(1, 1, 1, 17).setFontWeight("bold").setBackground("#f97316").setFontColor("#ffffff");
       sheetContracts.setFrozenRows(1);
     }
 
     var contractRow = data.contractRow || [
-      maKH, tenKH, soHD, ngayHD, dichVu, kyBC, soBC, ngayBC,
+      maKH, tenKH, soHD, ngayHD, dichVu, loaiBC, kyBC, soBC, ngayBC,
       bgd, ktv, yKien, thongTinBoSung, lyDo, soNhanSu, tomTatNhanSu, nowStr
     ];
     sheetContracts.appendRow(contractRow);
@@ -122,7 +116,7 @@ function doPost(e) {
         "Số Hợp Đồng", "Tên Khách Hàng", "Mã Khách Hàng", "Vị Trí",
         "Tên Nhân Sự", "Phần Hành", "Tỷ Lệ Thực Hiện (%)", "Thời Gian Lưu"
       ]);
-      sheetTeam.getRange(1, 1, 1, 8).setFontWeight("bold").setBackground("#e0e7ff");
+      sheetTeam.getRange(1, 1, 1, 8).setFontWeight("bold").setBackground("#7c3aed").setFontColor("#ffffff");
       sheetTeam.setFrozenRows(1);
     }
 
@@ -166,6 +160,11 @@ export function formatContractToRow(contract: AuditContract): (string | number)[
       ? `Khác: ${contract.auditorOther}`
       : contract.auditor;
 
+  const reportTypeVal =
+    contract.reportType === 'Khác' && contract.reportTypeOther
+      ? `Khác: ${contract.reportTypeOther}`
+      : contract.reportType || 'Riêng';
+
   const additionalTypes: string[] = [];
   if (contract.additionalOpinions.emphasisOfMatter) additionalTypes.push('Nhấn mạnh');
   if (contract.additionalOpinions.otherMatters) additionalTypes.push('Vấn đề khác');
@@ -184,6 +183,7 @@ export function formatContractToRow(contract: AuditContract): (string | number)[
     contract.service === 'Khác' && contract.serviceOther
       ? `Khác: ${contract.serviceOther}`
       : contract.service,
+    reportTypeVal,
     contract.reportPeriod,
     contract.reportNumber,
     contract.reportDate,
@@ -218,8 +218,6 @@ export function formatTeamMembersToRows(contract: AuditContract): (string | numb
 /**
  * Sends contract data directly to the owner's Google Apps Script Webhook.
  * Sends data via BOTH URL query parameters AND body payload
- * so that ANY Google Apps Script (whether it uses e.parameter or e.postData)
- * will receive 100% of the contract information!
  */
 export async function sendContractToSheetWebhook(
   webhookUrl: string = DEFAULT_WEBHOOK_URL,
@@ -243,6 +241,11 @@ export async function sendContractToSheetWebhook(
       ? `Khác: ${contract.auditorOther}`
       : contract.auditor;
 
+  const reportTypeVal =
+    contract.reportType === 'Khác' && contract.reportTypeOther
+      ? `Khác: ${contract.reportTypeOther}`
+      : contract.reportType || 'Riêng';
+
   const additionalTypes: string[] = [];
   if (contract.additionalOpinions.emphasisOfMatter) additionalTypes.push('Nhấn mạnh');
   if (contract.additionalOpinions.otherMatters) additionalTypes.push('Vấn đề khác');
@@ -262,12 +265,12 @@ export async function sendContractToSheetWebhook(
 
   // 1. Comprehensive multi-format payload
   const payload: Record<string, any> = {
-    // Standard English keys
     customerCode: contract.customerCode,
     customerName: contract.customerName,
     contractNumber: contract.contractNumber,
     contractDate: contract.contractDate,
     service: serviceVal,
+    reportType: reportTypeVal,
     reportPeriod: contract.reportPeriod,
     reportNumber: contract.reportNumber,
     reportDate: contract.reportDate,
@@ -287,6 +290,7 @@ export async function sendContractToSheetWebhook(
     soHopDong: contract.contractNumber,
     ngayHopDong: contract.contractDate,
     dichVu: serviceVal,
+    loaiBaoCao: reportTypeVal,
     kyBaoCao: contract.reportPeriod,
     soBaoCao: contract.reportNumber,
     ngayBaoCao: contract.reportDate,
@@ -305,6 +309,7 @@ export async function sendContractToSheetWebhook(
     'Số Hợp Đồng': contract.contractNumber,
     'Ngày Hợp Đồng': contract.contractDate,
     'Dịch Vụ': serviceVal,
+    'Loại Báo Cáo': reportTypeVal,
     'Kỳ Báo Cáo': contract.reportPeriod,
     'Số Báo Cáo': contract.reportNumber,
     'Ngày Báo Cáo': contract.reportDate,
@@ -332,6 +337,7 @@ export async function sendContractToSheetWebhook(
   urlObj.searchParams.set('contractNumber', contract.contractNumber);
   urlObj.searchParams.set('contractDate', contract.contractDate);
   urlObj.searchParams.set('service', serviceVal);
+  urlObj.searchParams.set('reportType', reportTypeVal);
   urlObj.searchParams.set('reportPeriod', contract.reportPeriod);
   urlObj.searchParams.set('reportNumber', contract.reportNumber);
   urlObj.searchParams.set('reportDate', contract.reportDate);
@@ -349,6 +355,7 @@ export async function sendContractToSheetWebhook(
   urlObj.searchParams.set('soHopDong', contract.contractNumber);
   urlObj.searchParams.set('ngayHopDong', contract.contractDate);
   urlObj.searchParams.set('dichVu', serviceVal);
+  urlObj.searchParams.set('loaiBaoCao', reportTypeVal);
   urlObj.searchParams.set('kyBaoCao', contract.reportPeriod);
   urlObj.searchParams.set('soBaoCao', contract.reportNumber);
   urlObj.searchParams.set('ngayBaoCao', contract.reportDate);
@@ -359,7 +366,6 @@ export async function sendContractToSheetWebhook(
   const fullUrl = urlObj.toString();
 
   try {
-    // Send via POST with no-cors to handle Google Apps Script 302 redirect
     await fetch(fullUrl, {
       method: 'POST',
       mode: 'no-cors',
@@ -372,7 +378,6 @@ export async function sendContractToSheetWebhook(
     return { success: true };
   } catch (error: any) {
     console.error('Lỗi khi gửi webhook Google Sheet:', error);
-    // Fallback: try GET with full URL params
     try {
       await fetch(fullUrl, { method: 'GET', mode: 'no-cors' });
       return { success: true };

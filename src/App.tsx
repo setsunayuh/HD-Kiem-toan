@@ -118,7 +118,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col font-sans antialiased text-slate-800">
+    <div className="min-h-screen bg-slate-950 flex flex-col font-sans antialiased text-slate-100 selection:bg-orange-500 selection:text-white">
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -130,12 +130,12 @@ export default function App() {
       {notification && (
         <div className="fixed top-24 right-4 z-50 max-w-md animate-in slide-in-from-top-4 duration-200">
           <div
-            className={`p-4 rounded-2xl shadow-xl border flex items-start gap-3 ${
+            className={`p-4 rounded-2xl shadow-2xl border flex items-start gap-3 ${
               notification.type === 'success'
-                ? 'bg-slate-900 text-white border-emerald-500/50'
+                ? 'bg-slate-900/95 text-white border-emerald-500/50 shadow-emerald-950/40'
                 : notification.type === 'warning'
-                ? 'bg-amber-900 text-white border-amber-500/50'
-                : 'bg-red-900 text-white border-red-500/50'
+                ? 'bg-slate-900/95 text-white border-amber-500/50 shadow-amber-950/40'
+                : 'bg-slate-900/95 text-white border-red-500/50 shadow-red-950/40'
             }`}
           >
             {notification.type === 'success' ? (
@@ -183,12 +183,12 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800">
+      <footer className="bg-slate-950/95 text-slate-400 text-xs py-6 border-t border-orange-500/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-200">QUẢN LÝ HỢP ĐỒNG KIỂM TOÁN</span>
+            <span className="font-bold text-orange-300">QUẢN LÝ HỢP ĐỒNG KIỂM TOÁN</span>
             <span>•</span>
-            <span>Phiên bản doanh nghiệp 2026</span>
+            <span>Mùa Kiểm Toán 2026</span>
           </div>
           <div className="flex items-center gap-4 text-slate-400">
             <span>Tự động lưu về Google Sheet riêng của bạn</span>
