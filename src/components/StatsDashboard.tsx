@@ -55,8 +55,19 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ contracts }) => 
     return { name: op, count, percentage };
   });
 
-  // Team member workload calculation
-  const memberWorkload = TEAM_MEMBERS.map((memberName) => {
+  // Team member workload calculation (including custom names from contracts)
+  const standardNames = TEAM_MEMBERS.filter((name) => name !== 'Khác');
+  const allNamesSet = new Set<string>(standardNames);
+  contracts.forEach((c) => {
+    c.teamMembers.forEach((tm) => {
+      if (tm.name && tm.name !== 'Khác') {
+        allNamesSet.add(tm.name);
+      }
+    });
+  });
+  const allMemberNames = Array.from(allNamesSet);
+
+  const memberWorkload = allMemberNames.map((memberName) => {
     let contractCount = 0;
     let totalPercentageAssigned = 0;
     const positions: string[] = [];
@@ -169,7 +180,7 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ contracts }) => 
             <h3 className="text-3xl font-black text-indigo-700 mt-1">
               {memberWorkload.filter((m) => m.contractCount > 0).length}
             </h3>
-            <p className="text-[11px] text-slate-500 mt-1">Trong tổng số 13 kiểm toán viên</p>
+            <p className="text-[11px] text-slate-500 mt-1">Trong tổng số {standardNames.length} KTV & nhân sự</p>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-indigo-100 border border-indigo-200 text-indigo-600 flex items-center justify-center text-2xl">
             👥

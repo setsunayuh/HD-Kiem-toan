@@ -62,6 +62,7 @@ export const TEAM_MEMBERS = [
   'Phương Linh',
   'Hà Phương',
   'Trung Kiên',
+  'Khác',
 ] as const;
 
 // Danh sách phần hành: Q, F tiền, F vay, Khác...
@@ -91,7 +92,8 @@ export const AUDIT_SECTIONS = [
 export interface TeamMemberExecution {
   id: string;
   position: string; // "Nhóm trưởng", "Trợ lý 1", "Trợ lý 2", "Trợ lý 3", etc.
-  name: string; // from TEAM_MEMBERS or custom
+  name: string; // from TEAM_MEMBERS or custom name
+  customName?: string; // If 'Khác' is chosen, holds the typed custom name
   section: string; // Multiple comma-separated sections, e.g. "Báo cáo, IFRS" or "F tiền, F vay, Q"
   percentage: number; // e.g. 40 (meaning 40%)
 }

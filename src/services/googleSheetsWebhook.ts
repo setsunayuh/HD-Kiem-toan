@@ -205,16 +205,22 @@ export function formatContractToRow(contract: AuditContract): (string | number)[
  */
 export function formatTeamMembersToRows(contract: AuditContract): (string | number)[][] {
   const formattedNow = new Date().toLocaleString('vi-VN');
-  return contract.teamMembers.map((member) => [
-    contract.contractNumber,
-    contract.customerName,
-    contract.customerCode,
-    member.position,
-    member.name,
-    member.section,
-    `${member.percentage}%`,
-    formattedNow,
-  ]);
+  return contract.teamMembers.map((member) => {
+    const displayName =
+      member.name === 'Khác' && member.customName?.trim()
+        ? member.customName.trim()
+        : member.name;
+    return [
+      contract.contractNumber,
+      contract.customerName,
+      contract.customerCode,
+      member.position,
+      displayName,
+      member.section,
+      `${member.percentage}%`,
+      formattedNow,
+    ];
+  });
 }
 
 /**

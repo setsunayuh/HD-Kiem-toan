@@ -165,7 +165,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
     const newRow: TeamMemberExecution = {
       id: 'row-' + Date.now() + Math.random(),
       position: defaultPos,
-      name: TEAM_MEMBERS[Math.min(nextIdx, TEAM_MEMBERS.length - 1)],
+      name: TEAM_MEMBERS[Math.min(nextIdx, Math.max(0, TEAM_MEMBERS.length - 2))],
       section: nextIdx % 2 === 0 ? 'F tiền, Q' : 'A',
       percentage: remaining > 0 ? remaining : 10,
     };
@@ -346,6 +346,8 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         }
         if (!member.name) {
           errs.push(`Dòng ${rowNo}: Tên nhân sự chưa chọn.`);
+        } else if (member.name === 'Khác' && (!member.customName || !member.customName.trim())) {
+          errs.push(`Dòng ${rowNo}: Đang chọn nhân sự "Khác", vui lòng điền họ tên nhân sự.`);
         }
         if (!member.section || !member.section.trim()) {
           errs.push(`Dòng ${rowNo}: Phần hành kiểm toán chưa chọn.`);
@@ -406,10 +408,16 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         emphasisOfMatter,
         reason: opinionReason.trim(),
       },
-      teamMembers: teamMembers.map((m) => ({
-        ...m,
-        percentage: Number(m.percentage),
-      })),
+      teamMembers: teamMembers.map((m) => {
+        const resolvedName =
+          m.name === 'Khác' && m.customName?.trim() ? m.customName.trim() : m.name;
+        return {
+          ...m,
+          name: resolvedName,
+          customName: m.name === 'Khác' ? m.customName?.trim() : undefined,
+          percentage: Number(m.percentage),
+        };
+      }),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -590,223 +598,242 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-            {/* 1. Dịch vụ */}
-            <div>
-              <label className="block text-sm font-bold text-slate-800 mb-1.5">
-                Dịch vụ <span className="text-orange-600">*</span>
-              </label>
-              <select
-                value={service}
-                onChange={(e) => setService(e.target.value as ServiceType)}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all"
-              >
-                {SERVICE_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
+          <div className="space-y-5">
+            {/* Hàng 1: Dịch vụ & Loại báo cáo (Cân đối 2 cột đều nhau) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {/* 1. Dịch vụ */}
+              <div className="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                <div>
+                  <label className="block text-sm font-bold text-slate-800 mb-2">
+                    Dịch vụ <span className="text-orange-600">*</span>
+                  </label>
+                  <select
+                    value={service}
+                    onChange={(e) => setService(e.target.value as ServiceType)}
+                    className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-medium transition-all shadow-2xs"
+                  >
+                    {SERVICE_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
 
-              {service === 'Khác' && (
-                <div className="mt-2.5">
-                  <input
-                    type="text"
-                    value={serviceOther}
-                    onChange={(e) => setServiceOther(e.target.value)}
-                    placeholder="Nhập tên dịch vụ khác..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-orange-50 border border-orange-300 text-orange-950 placeholder-slate-400 text-sm focus:ring-2 focus:ring-orange-500"
-                  />
+                  {service === 'Khác' && (
+                    <div className="mt-3">
+                      <input
+                        type="text"
+                        value={serviceOther}
+                        onChange={(e) => setServiceOther(e.target.value)}
+                        placeholder="Nhập tên dịch vụ khác..."
+                        className="w-full h-11 px-3.5 rounded-xl bg-white border border-orange-400 text-slate-900 placeholder-slate-400 text-sm focus:ring-2 focus:ring-orange-500 font-medium shadow-2xs"
+                        autoFocus
+                      />
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-
-            {/* 2. Loại báo cáo (Riêng, Hợp nhất, Tổng hợp, Khác) */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                  <Layers className="w-3.5 h-3.5 text-purple-600" />
-                  Loại báo cáo <span className="text-orange-600">*</span>
-                </label>
-                <span className="text-[10px] text-purple-700 bg-purple-100 px-2 py-0.5 rounded font-bold border border-purple-200">
-                  Riêng / Hợp nhất / Tổng hợp
-                </span>
               </div>
-              <select
-                value={reportType}
-                onChange={(e) => setReportType(e.target.value as ReportType)}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all font-semibold"
-              >
-                {REPORT_TYPE_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </select>
 
-              {reportType === 'Khác' && (
-                <div className="mt-2.5">
-                  <input
-                    type="text"
-                    value={reportTypeOther}
-                    onChange={(e) => setReportTypeOther(e.target.value)}
-                    placeholder="Nhập loại báo cáo khác..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-purple-50 border border-purple-300 text-purple-950 placeholder-slate-400 text-sm focus:ring-2 focus:ring-purple-500"
-                  />
+              {/* 2. Loại báo cáo */}
+              <div className="bg-purple-50/40 p-4 rounded-2xl border border-purple-200 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
+                      <Layers className="w-4 h-4 text-purple-600" />
+                      Loại báo cáo <span className="text-orange-600">*</span>
+                    </label>
+                    <span className="text-[11px] text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full font-bold border border-purple-200">
+                      Riêng / Hợp nhất / Tổng hợp
+                    </span>
+                  </div>
+                  <select
+                    value={reportType}
+                    onChange={(e) => setReportType(e.target.value as ReportType)}
+                    className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all font-semibold shadow-2xs"
+                  >
+                    {REPORT_TYPE_OPTIONS.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
+                    ))}
+                  </select>
+
+                  {reportType === 'Khác' && (
+                    <div className="mt-3">
+                      <input
+                        type="text"
+                        value={reportTypeOther}
+                        onChange={(e) => setReportTypeOther(e.target.value)}
+                        placeholder="Nhập loại báo cáo khác..."
+                        className="w-full h-11 px-3.5 rounded-xl bg-white border border-purple-400 text-slate-900 placeholder-slate-400 text-sm focus:ring-2 focus:ring-purple-500 font-medium shadow-2xs"
+                        autoFocus
+                      />
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-
-            {/* 3. MỤC MỚI YÊU CẦU: PHÁT HÀNH (Đã phát hành / Chưa phát hành) */}
-            <div>
-              <label className="block text-sm font-bold text-slate-800 mb-1.5">
-                Phát hành <span className="text-orange-600">*</span>
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setReleaseStatus('Chưa phát hành')}
-                  className={`px-3 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
-                    releaseStatus === 'Chưa phát hành'
-                      ? 'bg-slate-100 border-slate-400 text-slate-800 shadow-xs ring-2 ring-slate-300'
-                      : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>⏳</span>
-                  <span>Chưa phát hành</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setReleaseStatus('Đã phát hành')}
-                  className={`px-3 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
-                    releaseStatus === 'Đã phát hành'
-                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-orange-600 shadow-md shadow-orange-500/20 ring-2 ring-orange-300'
-                      : 'bg-white border-slate-200 text-slate-500 hover:bg-orange-50'
-                  }`}
-                >
-                  <span>🎃</span>
-                  <span>Đã phát hành</span>
-                </button>
               </div>
             </div>
 
-            {/* 4. Kỳ báo cáo: dd/mm/yyyy */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                  Kỳ báo cáo <span className="text-orange-600">*</span>
-                  <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
-                </label>
-                <div className="flex items-center gap-1">
-                  {[`31/12/${currentYear - 1}`].map((preset) => (
+            {/* Hàng 2: Phát hành & Kỳ báo cáo (Cân đối 2 cột đều nhau) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-3">
+              {/* 3. Phát hành */}
+              <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-200 flex flex-col justify-between">
+                <div>
+                  <label className="block text-sm font-bold text-slate-800 mb-2">
+                    Tình trạng phát hành <span className="text-orange-600">*</span>
+                  </label>
+                  <div className="grid grid-cols-2 gap-2.5">
                     <button
-                      key={preset}
                       type="button"
-                      onClick={() => setReportPeriod(preset)}
-                      className="text-[10px] px-1.5 py-0.5 bg-orange-100 hover:bg-orange-200 text-orange-800 border border-orange-200 rounded cursor-pointer font-bold"
+                      onClick={() => setReleaseStatus('Chưa phát hành')}
+                      className={`h-11 px-3 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
+                        releaseStatus === 'Chưa phát hành'
+                          ? 'bg-slate-800 border-slate-900 text-white shadow-sm ring-2 ring-slate-400'
+                          : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-100'
+                      }`}
                     >
-                      {preset}
+                      <span className="text-sm">⏳</span>
+                      <span>Chưa phát hành</span>
                     </button>
-                  ))}
+
+                    <button
+                      type="button"
+                      onClick={() => setReleaseStatus('Đã phát hành')}
+                      className={`h-11 px-3 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
+                        releaseStatus === 'Đã phát hành'
+                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-orange-600 shadow-md shadow-orange-500/30 ring-2 ring-orange-300'
+                          : 'bg-white border-slate-300 text-slate-600 hover:bg-orange-50'
+                      }`}
+                    >
+                      <span className="text-sm">🎃</span>
+                      <span>Đã phát hành</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
+
+              {/* 4. Kỳ báo cáo */}
+              <div className="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                      Kỳ báo cáo <span className="text-orange-600">*</span>
+                      <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
+                    </label>
+                    <div className="flex items-center gap-1">
+                      {[`31/12/${currentYear - 1}`].map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => setReportPeriod(preset)}
+                          className="text-[10px] px-2 py-0.5 bg-orange-100 hover:bg-orange-200 text-orange-800 border border-orange-300 rounded-md cursor-pointer font-bold"
+                          title="Chọn nhanh kỳ báo cáo kết thúc năm"
+                        >
+                          {preset}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={reportPeriod}
+                      onChange={(e) => handleDateInput(e.target.value, setReportPeriod)}
+                      placeholder={`VD: 31/12/${currentYear - 1}`}
+                      maxLength={10}
+                      className="w-full h-11 pl-10 pr-4 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wider transition-all shadow-2xs font-semibold"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lưu ý khi tích Đã phát hành */}
+            {releaseStatus === 'Đã phát hành' && (
+              <div className="p-4 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-200 shadow-sm">
+                <span className="text-2xl flex-shrink-0 mt-0.5">⚠️</span>
+                <div className="flex-1 text-xs sm:text-sm">
+                  <strong className="font-extrabold text-amber-950 block text-sm mb-0.5">
+                    Lưu ý quan trọng: Nhớ kiểm tra lại ngày báo cáo! 🎃📝
+                  </strong>
+                  <span className="text-amber-800 text-xs">
+                    Hợp đồng đang đánh dấu là <b>&quot;Đã phát hành&quot;</b>. Vui lòng rà soát chính xác <b>Số báo cáo</b> và <b>Ngày báo cáo ({reportDate || 'chưa điền'})</b> trước khi lưu để dữ liệu đồng bộ lên Google Sheet chính xác 100%.
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Hàng 3: Số báo cáo & Ngày báo cáo */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 pt-3">
+              {/* Số báo cáo (Chiếm 8 cột) */}
+              <div className="md:col-span-8 bg-slate-50/70 p-4 rounded-2xl border border-slate-200">
+                <div className="flex flex-wrap items-center justify-between mb-2 gap-2">
+                  <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                    Số báo cáo <span className="text-orange-600">*</span>
+                    <span className="text-xs font-normal text-slate-500">(nhập đầy đủ theo ý kiến kiểm toán)</span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const num = contractNumber ? contractNumber.split('/')[0] : '251';
+                      const yr = contractNumber && contractNumber.includes('/') ? contractNumber.split('/')[1] : currentYear;
+                      const code = customerCode ? customerCode.padStart(5, '0') : '00070';
+                      setReportNumber(`${num}/${yr}/BCKT-HCM.${code}`);
+                    }}
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-extrabold transition-colors cursor-pointer"
+                    title="Gợi ý số báo cáo chuẩn theo ý kiến kiểm toán"
+                  >
+                    ⚡ Gợi ý: {contractNumber ? contractNumber.split('/')[0] : '251'}/{contractNumber && contractNumber.includes('/') ? contractNumber.split('/')[1] : currentYear}/BCKT-HCM.{customerCode ? customerCode.padStart(5, '0') : '00070'}
+                  </button>
+                </div>
                 <input
                   type="text"
-                  value={reportPeriod}
-                  onChange={(e) => handleDateInput(e.target.value, setReportPeriod)}
-                  placeholder={`VD: 31/12/${currentYear - 1}`}
-                  maxLength={10}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wider transition-all"
+                  value={reportNumber}
+                  onChange={(e) => setReportNumber(e.target.value)}
+                  placeholder="Ví dụ: 251/2026/BCKT-HCM.00070"
+                  className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wide transition-all font-bold shadow-2xs"
                 />
+                <p className="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1.5">
+                  <Info className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
+                  <span>
+                    Lưu ý: Lấy thông tin theo ý kiến kiểm toán. Ví dụ: <strong className="text-slate-800 font-mono">251/2026/BCKT-HCM.00070</strong>
+                  </span>
+                </p>
               </div>
-            </div>
-          </div>
 
-          {/* LƯU Ý KHI TÍCH "ĐÃ PHÁT HÀNH": HIỆN LƯU Ý NHỚ KIỂM TRA LẠI NGÀY BÁO CÁO */}
-          {releaseStatus === 'Đã phát hành' && (
-            <div className="mt-4 p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-900 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-200 shadow-xs">
-              <span className="text-xl flex-shrink-0 mt-0.5">⚠️</span>
-              <div className="flex-1 text-xs sm:text-sm">
-                <strong className="font-extrabold text-amber-950 block">
-                  Lưu ý quan trọng: Nhớ kiểm tra lại ngày báo cáo! 🎃📝
-                </strong>
-                <span className="text-amber-800 text-xs">
-                  Hợp đồng được đánh dấu là <b>&quot;Đã phát hành&quot;</b>. Vui lòng rà soát chính xác <b>Số báo cáo</b> và <b>Ngày báo cáo ({reportDate || 'chưa điền'})</b> trước khi lưu để dữ liệu đồng bộ lên Google Sheet chính xác 100%.
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Dòng Số báo cáo & Ngày báo cáo */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 pt-5 border-t border-purple-100">
-            {/* Số báo cáo: Nhập đầy đủ. Lưu ý: Lấy thông tin theo ý kiến kiểm toán. Ví dụ: 251/2026/BCKT-HCM.00070 */}
-            <div className="md:col-span-2">
-              <div className="flex flex-wrap items-center justify-between mb-1.5 gap-2">
-                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                  Số báo cáo <span className="text-orange-600">*</span>
-                  <span className="text-xs font-normal text-slate-500">(nhập đầy đủ theo ý kiến kiểm toán)</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const num = contractNumber ? contractNumber.split('/')[0] : '251';
-                    const yr = contractNumber && contractNumber.includes('/') ? contractNumber.split('/')[1] : currentYear;
-                    const code = customerCode ? customerCode.padStart(5, '0') : '00070';
-                    setReportNumber(`${num}/${yr}/BCKT-HCM.${code}`);
-                  }}
-                  className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 font-bold transition-colors cursor-pointer"
-                  title="Gợi ý số báo cáo chuẩn theo ý kiến kiểm toán"
-                >
-                  ⚡ Gợi ý: {contractNumber ? contractNumber.split('/')[0] : '251'}/{contractNumber && contractNumber.includes('/') ? contractNumber.split('/')[1] : currentYear}/BCKT-HCM.{customerCode ? customerCode.padStart(5, '0') : '00070'}
-                </button>
-              </div>
-              <input
-                type="text"
-                value={reportNumber}
-                onChange={(e) => setReportNumber(e.target.value)}
-                placeholder="Ví dụ: 251/2026/BCKT-HCM.00070"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wide transition-all font-semibold"
-              />
-              <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
-                <Info className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
-                <span>
-                  Lưu ý: Lấy thông tin theo ý kiến kiểm toán. Ví dụ: <strong className="text-slate-800 font-mono">251/2026/BCKT-HCM.00070</strong>
-                </span>
-              </p>
-            </div>
-
-            {/* Ngày báo cáo */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                  Ngày báo cáo <span className="text-orange-600">*</span>
-                  <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setToday(setReportDate)}
-                  className="text-[11px] text-purple-600 hover:text-purple-700 font-bold cursor-pointer"
-                >
-                  Hôm nay
-                </button>
-              </div>
-              <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
-                <input
-                  type="text"
-                  value={reportDate}
-                  onChange={(e) => handleDateInput(e.target.value, setReportDate)}
-                  placeholder="VD: 25/03/2026"
-                  maxLength={10}
-                  className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-slate-900 placeholder-slate-400 text-sm font-mono transition-all ${
-                    releaseStatus === 'Đã phát hành'
-                      ? 'bg-amber-50/50 border-amber-300 focus:bg-white focus:ring-2 focus:ring-amber-500'
-                      : 'bg-slate-50 border-slate-300 focus:bg-white focus:ring-2 focus:ring-purple-500'
-                  }`}
-                />
+              {/* Ngày báo cáo (Chiếm 4 cột) */}
+              <div className="md:col-span-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                      Ngày báo cáo <span className="text-orange-600">*</span>
+                      <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setToday(setReportDate)}
+                      className="text-[11px] px-2 py-0.5 rounded-md bg-purple-100 hover:bg-purple-200 text-purple-800 border border-purple-200 font-bold cursor-pointer"
+                    >
+                      Hôm nay
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={reportDate}
+                      onChange={(e) => handleDateInput(e.target.value, setReportDate)}
+                      placeholder="VD: 25/03/2026"
+                      maxLength={10}
+                      className={`w-full h-11 pl-10 pr-4 rounded-xl border text-slate-900 placeholder-slate-400 text-sm font-mono transition-all shadow-2xs font-semibold ${
+                        releaseStatus === 'Đã phát hành'
+                          ? 'bg-amber-50/70 border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-500'
+                          : 'bg-white border-slate-300 focus:ring-2 focus:ring-purple-500'
+                      }`}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1074,17 +1101,32 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
                     {/* Tên */}
                     <td className="py-3 px-3">
-                      <select
-                        value={member.name}
-                        onChange={(e) => handleUpdateTeamRow(member.id, 'name', e.target.value)}
-                        className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 text-xs font-bold"
-                      >
-                        {TEAM_MEMBERS.map((memberName) => (
-                          <option key={memberName} value={memberName}>
-                            {memberName}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="space-y-1.5 min-w-[150px]">
+                        <select
+                          value={member.name}
+                          onChange={(e) => handleUpdateTeamRow(member.id, 'name', e.target.value)}
+                          className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 text-xs font-bold shadow-2xs"
+                        >
+                          {TEAM_MEMBERS.map((memberName) => (
+                            <option key={memberName} value={memberName}>
+                              {memberName === 'Khác' ? '✍️ Khác (Tự điền tên...)' : memberName}
+                            </option>
+                          ))}
+                        </select>
+
+                        {member.name === 'Khác' && (
+                          <input
+                            type="text"
+                            value={member.customName || ''}
+                            onChange={(e) =>
+                              handleUpdateTeamRow(member.id, 'customName', e.target.value)
+                            }
+                            placeholder="Nhập họ và tên..."
+                            className="w-full px-2.5 py-1.5 rounded-lg bg-orange-50 border border-orange-400 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 text-xs font-semibold shadow-2xs animate-in fade-in duration-150"
+                            autoFocus
+                          />
+                        )}
+                      </div>
                     </td>
 
                     {/* Phần hành */}
