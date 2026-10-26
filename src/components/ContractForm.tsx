@@ -3,6 +3,7 @@ import {
   AuditContract,
   SERVICE_OPTIONS,
   REPORT_TYPE_OPTIONS,
+  RELEASE_STATUS_OPTIONS,
   BOARD_MEMBERS,
   AUDITOR_MEMBERS,
   AUDIT_OPINIONS,
@@ -10,6 +11,7 @@ import {
   TeamMemberExecution,
   ServiceType,
   ReportType,
+  ReleaseStatus,
   AuditOpinionType,
 } from '../types/audit';
 import {
@@ -25,6 +27,8 @@ import {
   Flame,
   Layers,
   Ghost,
+  Send,
+  Info,
 } from 'lucide-react';
 import { SectionMultiSelect } from './SectionMultiSelect';
 
@@ -44,10 +48,13 @@ export const ContractForm: React.FC<ContractFormProps> = ({
   const [contractDate, setContractDate] = useState('');
   const [service, setService] = useState<ServiceType>('Kiểm toán');
   const [serviceOther, setServiceOther] = useState('');
-  
+
   // Loại báo cáo (Riêng, Hợp nhất, Khác)
   const [reportType, setReportType] = useState<ReportType>('Riêng');
   const [reportTypeOther, setReportTypeOther] = useState('');
+
+  // Phát hành (Đã phát hành, Chưa phát hành)
+  const [releaseStatus, setReleaseStatus] = useState<ReleaseStatus>('Chưa phát hành');
 
   // Kỳ báo cáo theo mẫu dd/mm/yyyy (ví dụ: 31/12/2025)
   const currentYear = new Date().getFullYear();
@@ -204,6 +211,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
     setServiceOther('');
     setReportType('Riêng');
     setReportTypeOther('');
+    setReleaseStatus('Chưa phát hành');
     setReportPeriod(`31/12/${currentYear - 1}`);
     setReportNumber('');
     setReportDate('');
@@ -279,50 +287,55 @@ export const ContractForm: React.FC<ContractFormProps> = ({
       errs.push('Loại báo cáo: Đang chọn "Khác" nhưng chưa điền chi tiết loại báo cáo.');
     }
 
-    // 7. Kỳ báo cáo: sửa lại mẫu là dd/mm/yyyy
+    // 7. Phát hành
+    if (!releaseStatus) {
+      errs.push('Phát hành: Chưa chọn tình trạng phát hành (Đã phát hành / Chưa phát hành).');
+    }
+
+    // 8. Kỳ báo cáo: dd/mm/yyyy
     if (!reportPeriod.trim()) {
       errs.push('Kỳ báo cáo: Chưa nhập (theo mẫu dd/mm/yyyy, ví dụ: 31/12/2025).');
     } else if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/.test(reportPeriod.trim())) {
       errs.push('Kỳ báo cáo: Sai định dạng! Phải theo mẫu đầy đủ dd/mm/yyyy (ví dụ: 31/12/2025 hoặc 30/06/2026).');
     }
 
-    // 8. Số báo cáo
+    // 9. Số báo cáo
     if (!reportNumber.trim()) {
       errs.push('Số báo cáo: Chưa nhập.');
     }
 
-    // 9. Ngày báo cáo: dd/mm/yyyy
+    // 10. Ngày báo cáo: dd/mm/yyyy
     if (!reportDate.trim()) {
       errs.push('Ngày báo cáo: Chưa nhập (theo mẫu dd/mm/yyyy).');
     } else if (!/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/.test(reportDate.trim())) {
       errs.push('Ngày báo cáo: Sai định dạng ngày báo cáo (phải là dd/mm/yyyy, ví dụ: 25/03/2026).');
     }
 
-    // 10. Thành viên Ban Giám đốc
+    // 11. Thành viên Ban Giám đốc
     if (!boardMember) {
       errs.push('Thành viên Ban Giám đốc: Chưa tích chọn.');
     } else if (boardMember === 'Khác' && !boardMemberOther.trim()) {
       errs.push('Thành viên Ban Giám đốc: Đang chọn "Khác", vui lòng điền họ tên.');
     }
 
-    // 11. Kiểm toán viên
+    // 12. Kiểm toán viên
     if (!auditor) {
       errs.push('Kiểm toán viên: Chưa tích chọn.');
     } else if (auditor === 'Khác' && !auditorOther.trim()) {
       errs.push('Kiểm toán viên: Đang chọn "Khác", vui lòng điền họ tên.');
     }
 
-    // 12. Ý kiến kiểm toán
+    // 13. Ý kiến kiểm toán
     if (!auditOpinion) {
       errs.push('Ý kiến kiểm toán: Chưa chọn ý kiến kiểm toán.');
     }
 
-    // 13. Thông tin bổ sung ý kiến kiểm toán
+    // 14. Thông tin bổ sung ý kiến kiểm toán
     if ((emphasisOfMatter || otherMatters) && !opinionReason.trim()) {
       errs.push('Thông tin bổ sung ý kiến: Đã tích chọn Vấn đề khác / Nhấn mạnh thì phải nhập lý do bổ sung.');
     }
 
-    // 14. THÔNG TIN THỰC HIỆN HỢP ĐỒNG (Bảng nhóm)
+    // 15. THÔNG TIN THỰC HIỆN HỢP ĐỒNG (Bảng nhóm)
     if (!teamMembers || teamMembers.length === 0) {
       errs.push('Thông tin thực hiện hợp đồng: Bảng phân công nhóm kiểm toán không được để trống.');
     } else {
@@ -379,6 +392,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
       serviceOther: service === 'Khác' ? serviceOther.trim() : undefined,
       reportType,
       reportTypeOther: reportType === 'Khác' ? reportTypeOther.trim() : undefined,
+      releaseStatus,
       reportPeriod: reportPeriod.trim(),
       reportNumber: reportNumber.trim(),
       reportDate: reportDate.trim(),
@@ -406,49 +420,48 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
   return (
     <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6">
-      {/* Banner Halloween Theme: Vibrant Pumpkin Orange, Mystical Purple, Obsidian Glow */}
-      <div className="mb-6 relative rounded-3xl overflow-hidden p-6 bg-gradient-to-r from-slate-950 via-[#181126] to-slate-950 border border-orange-500/30 shadow-2xl shadow-orange-950/40">
-        <div className="absolute -top-12 -right-12 w-48 h-48 bg-orange-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-12 -left-12 w-48 h-48 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-
+      {/* Banner Halloween on White Background: Crisp White with Vibrant Pumpkin Orange, Amethyst Purple, and Spooky Emoticons */}
+      <div className="mb-6 relative rounded-3xl overflow-hidden p-6 sm:p-7 bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-purple-500/10 border-2 border-orange-300 shadow-md">
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-gradient-to-r from-orange-500/20 to-purple-500/20 text-orange-300 border border-orange-500/40 shadow-xs">
-                <Flame className="w-3.5 h-3.5 text-orange-400 animate-pulse" />
-                Halloween Audit Master
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-orange-500 text-white shadow-xs">
+                <Flame className="w-3.5 h-3.5 text-amber-200 animate-pulse" />
+                🎃 Halloween Audit Season 🦇
               </span>
-              <span className="text-xs text-purple-300/80 hidden md:inline font-mono">
-                🎃 Mùa Kiểm Toán 2026
+              <span className="text-xs text-purple-700 font-bold bg-purple-100 px-2.5 py-0.5 rounded-full border border-purple-200">
+                👻 Mùa Kiểm Toán 2026 🍬
               </span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-2">
-              Biểu Mẫu Nhập Hợp Đồng & Phân Công Nhóm
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+              <span>Biểu Mẫu Nhập Hợp Đồng & Phân Công Nhóm</span>
+              <span className="text-xl">🕯️</span>
             </h2>
-            <p className="text-slate-300 text-xs sm:text-sm mt-1.5 max-w-2xl leading-relaxed">
-              Nhập đầy đủ thông tin hợp đồng, phân bổ tỷ lệ nhóm (tổng 100%), bấm OK sẽ tự động gửi thẳng về file Google Sheet của bạn.
+            <p className="text-slate-600 text-xs sm:text-sm mt-1.5 max-w-2xl leading-relaxed">
+              Nhập đầy đủ thông tin hợp đồng, kiểm tra tình trạng phát hành, phân bổ tỷ lệ nhóm (tổng 100%), bấm OK sẽ tự động lưu về Google Sheet của bạn. 🎃✨
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-xl bg-orange-500/10 border border-orange-500/30 text-orange-300">
-            <Ghost className="w-4 h-4 text-orange-400" />
-            <span>Tự Động Đồng Bộ Sheet</span>
+          <div className="flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-2xl bg-white border border-orange-300 text-orange-700 shadow-sm">
+            <Ghost className="w-4 h-4 text-orange-500" />
+            <span>Tự Động Lưu Sheet 🕸️</span>
           </div>
         </div>
       </div>
 
       <form onSubmit={handleOkSubmit} className="space-y-7">
         {/* SECTION 1: THÔNG TIN KHÁCH HÀNG & HỢP ĐỒNG */}
-        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl border border-orange-500/20 shadow-xl p-6 sm:p-7 transition-all hover:border-orange-500/35">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-800">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-black text-base shadow-md shadow-orange-500/30">
+        <div className="bg-white rounded-3xl border border-orange-200 shadow-md p-6 sm:p-7 transition-all hover:border-orange-400">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-orange-100">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-orange-500/30">
               1
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-white tracking-wide">
-                Thông Tin Khách Hàng & Hợp Đồng
+              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-wide flex items-center gap-1.5">
+                <span>Thông Tin Khách Hàng & Hợp Đồng</span>
+                <span>🎃</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Nhập mã khách hàng (tối đa 5 số), tên khách hàng, số và ngày ký hợp đồng
               </p>
             </div>
@@ -458,14 +471,14 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             {/* Mã khách hàng */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-200 flex items-center gap-1">
-                  Mã khách hàng <span className="text-orange-400">*</span>
-                  <span className="text-xs font-normal text-slate-400">(tối đa 5 chữ số)</span>
+                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                  Mã khách hàng <span className="text-orange-600">*</span>
+                  <span className="text-xs font-normal text-slate-500">(tối đa 5 chữ số)</span>
                 </label>
                 <div className="flex items-center gap-2">
                   <span
                     className={`text-xs font-mono font-bold ${
-                      customerCode.length === 5 ? 'text-amber-400' : 'text-slate-400'
+                      customerCode.length === 5 ? 'text-orange-600' : 'text-slate-500'
                     }`}
                   >
                     {customerCode.length}/5 số
@@ -473,7 +486,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   <button
                     type="button"
                     onClick={padCustomerCode}
-                    className="text-[11px] text-orange-400 hover:text-orange-300 underline font-medium cursor-pointer"
+                    className="text-[11px] text-orange-600 hover:text-orange-700 underline font-semibold cursor-pointer"
                     title="Đệm số 0 vào trước cho đủ 5 số"
                   >
                     Đệm 5 số
@@ -486,23 +499,23 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 onChange={handleCustomerCodeChange}
                 placeholder="VD: 00128 hoặc 12345"
                 maxLength={5}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono tracking-wider transition-all"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono tracking-wider transition-all"
               />
             </div>
 
             {/* Tên khách hàng */}
             <div>
-              <label className="block text-sm font-bold text-slate-200 mb-1.5">
-                Tên khách hàng <span className="text-orange-400">*</span>
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
+                Tên khách hàng <span className="text-orange-600">*</span>
               </label>
               <div className="relative">
-                <Building2 className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Building2 className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   type="text"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="VD: Công ty Cổ phần Thép Miền Đông"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all"
                 />
               </div>
             </div>
@@ -510,10 +523,10 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             {/* Số hợp đồng */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-200 flex items-center gap-1">
-                  Số hợp đồng <span className="text-orange-400">*</span>
+                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                  Số hợp đồng <span className="text-orange-600">*</span>
                 </label>
-                <span className="text-xs text-orange-300 bg-orange-950/70 border border-orange-500/40 px-2 py-0.5 rounded-md font-mono">
+                <span className="text-xs text-orange-700 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded-md font-mono font-bold">
                   Mẫu: 000/0000
                 </span>
               </div>
@@ -523,9 +536,9 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 onChange={handleContractNumberChange}
                 placeholder="VD: 086/2026 (3 số đầu / 4 số năm)"
                 maxLength={8}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono tracking-wider transition-all"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono tracking-wider transition-all"
               />
-              <p className="text-[11px] text-slate-400 mt-1">
+              <p className="text-[11px] text-slate-500 mt-1">
                 3 số đầu là số hợp đồng, 4 số sau dấu &quot;/&quot; là năm phát hành.
               </p>
             </div>
@@ -533,62 +546,63 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             {/* Ngày hợp đồng */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-200 flex items-center gap-1">
-                  Ngày hợp đồng <span className="text-orange-400">*</span>
-                  <span className="text-xs font-normal text-slate-400">(dd/mm/yyyy)</span>
+                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                  Ngày hợp đồng <span className="text-orange-600">*</span>
+                  <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
                 </label>
                 <button
                   type="button"
                   onClick={() => setToday(setContractDate)}
-                  className="text-[11px] text-orange-400 hover:text-orange-300 font-medium cursor-pointer"
+                  className="text-[11px] text-orange-600 hover:text-orange-700 font-bold cursor-pointer"
                 >
                   Hôm nay
                 </button>
               </div>
               <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   type="text"
                   value={contractDate}
                   onChange={(e) => handleDateInput(e.target.value, setContractDate)}
                   placeholder="VD: 15/01/2026"
                   maxLength={10}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono transition-all"
                 />
               </div>
             </div>
           </div>
         </div>
 
-        {/* SECTION 2: DỊCH VỤ, LOẠI BÁO CÁO & KỲ BÁO CÁO */}
-        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl border border-purple-500/25 shadow-xl p-6 sm:p-7 transition-all hover:border-purple-500/40">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-800">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-700 text-white flex items-center justify-center font-black text-base shadow-md shadow-purple-600/30">
+        {/* SECTION 2: DỊCH VỤ, LOẠI BÁO CÁO, PHÁT HÀNH & KỲ BÁO CÁO */}
+        <div className="bg-white rounded-3xl border border-purple-200 shadow-md p-6 sm:p-7 transition-all hover:border-purple-400">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-purple-100">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-700 text-white flex items-center justify-center font-black text-base shadow-sm shadow-purple-600/30">
               2
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-white tracking-wide">
-                Dịch Vụ, Loại Báo Cáo & Kỳ Báo Cáo
+              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-wide flex items-center gap-1.5">
+                <span>Dịch Vụ, Loại Báo Cáo, Phát Hành & Kỳ Báo Cáo</span>
+                <span>🦇</span>
               </h3>
-              <p className="text-xs text-slate-400">
-                Lựa chọn dịch vụ, loại báo cáo (Riêng / Hợp nhất) và kỳ kế toán theo mẫu dd/mm/yyyy
+              <p className="text-xs text-slate-500">
+                Lựa chọn dịch vụ, loại báo cáo, tình trạng phát hành và kỳ kế toán theo mẫu dd/mm/yyyy
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {/* Dịch vụ */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {/* 1. Dịch vụ */}
             <div>
-              <label className="block text-sm font-bold text-slate-200 mb-1.5">
-                Dịch vụ <span className="text-orange-400">*</span>
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
+                Dịch vụ <span className="text-orange-600">*</span>
               </label>
               <select
                 value={service}
                 onChange={(e) => setService(e.target.value as ServiceType)}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all"
               >
                 {SERVICE_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt} className="bg-slate-900 text-white">
+                  <option key={opt} value={opt}>
                     {opt}
                   </option>
                 ))}
@@ -601,30 +615,30 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={serviceOther}
                     onChange={(e) => setServiceOther(e.target.value)}
                     placeholder="Nhập tên dịch vụ khác..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-amber-500/40 text-amber-200 placeholder-slate-500 text-sm focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-orange-50 border border-orange-300 text-orange-950 placeholder-slate-400 text-sm focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               )}
             </div>
 
-            {/* MỤC MỚI: Loại báo cáo (Riêng, Hợp nhất, Khác) */}
+            {/* 2. Loại báo cáo (Riêng, Hợp nhất, Khác) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-200 flex items-center gap-1">
-                  <Layers className="w-3.5 h-3.5 text-purple-400" />
-                  Loại báo cáo <span className="text-orange-400">*</span>
+                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                  <Layers className="w-3.5 h-3.5 text-purple-600" />
+                  Loại báo cáo <span className="text-orange-600">*</span>
                 </label>
-                <span className="text-[10px] text-purple-300 bg-purple-950/60 px-2 py-0.5 rounded border border-purple-500/30 font-semibold">
-                  Mới thêm
+                <span className="text-[10px] text-purple-700 bg-purple-100 px-2 py-0.5 rounded font-bold border border-purple-200">
+                  Riêng / Hợp nhất
                 </span>
               </div>
               <select
                 value={reportType}
                 onChange={(e) => setReportType(e.target.value as ReportType)}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all font-medium"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all font-semibold"
               >
                 {REPORT_TYPE_OPTIONS.map((opt) => (
-                  <option key={opt} value={opt} className="bg-slate-900 text-white">
+                  <option key={opt} value={opt}>
                     {opt}
                   </option>
                 ))}
@@ -637,26 +651,60 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={reportTypeOther}
                     onChange={(e) => setReportTypeOther(e.target.value)}
                     placeholder="Nhập loại báo cáo khác..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-purple-500/40 text-purple-200 placeholder-slate-500 text-sm focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-3.5 py-2 rounded-xl bg-purple-50 border border-purple-300 text-purple-950 placeholder-slate-400 text-sm focus:ring-2 focus:ring-purple-500"
                   />
                 </div>
               )}
             </div>
 
-            {/* MỤC SỬA: Kỳ báo cáo: sửa lại mẫu là dd/mm/yyyy */}
+            {/* 3. MỤC MỚI YÊU CẦU: PHÁT HÀNH (Đã phát hành / Chưa phát hành) */}
+            <div>
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
+                Phát hành <span className="text-orange-600">*</span>
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setReleaseStatus('Chưa phát hành')}
+                  className={`px-3 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
+                    releaseStatus === 'Chưa phát hành'
+                      ? 'bg-slate-100 border-slate-400 text-slate-800 shadow-xs ring-2 ring-slate-300'
+                      : 'bg-white border-slate-200 text-slate-500 hover:bg-slate-50'
+                  }`}
+                >
+                  <span>⏳</span>
+                  <span>Chưa phát hành</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setReleaseStatus('Đã phát hành')}
+                  className={`px-3 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
+                    releaseStatus === 'Đã phát hành'
+                      ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-orange-600 shadow-md shadow-orange-500/20 ring-2 ring-orange-300'
+                      : 'bg-white border-slate-200 text-slate-500 hover:bg-orange-50'
+                  }`}
+                >
+                  <span>🎃</span>
+                  <span>Đã phát hành</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 4. Kỳ báo cáo: dd/mm/yyyy */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-200 flex items-center gap-1">
-                  Kỳ báo cáo <span className="text-orange-400">*</span>
-                  <span className="text-xs font-normal text-slate-400">(dd/mm/yyyy)</span>
+                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                  Kỳ báo cáo <span className="text-orange-600">*</span>
+                  <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
                 </label>
                 <div className="flex items-center gap-1">
-                  {[`31/12/${currentYear - 1}`, `30/06/${currentYear}`].map((preset) => (
+                  {[`31/12/${currentYear - 1}`].map((preset) => (
                     <button
                       key={preset}
                       type="button"
                       onClick={() => setReportPeriod(preset)}
-                      className="text-[10px] px-1.5 py-0.5 bg-slate-800 hover:bg-orange-500/20 text-orange-300 border border-slate-700 rounded cursor-pointer"
+                      className="text-[10px] px-1.5 py-0.5 bg-orange-100 hover:bg-orange-200 text-orange-800 border border-orange-200 rounded cursor-pointer font-bold"
                     >
                       {preset}
                     </button>
@@ -664,59 +712,78 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 </div>
               </div>
               <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   type="text"
                   value={reportPeriod}
                   onChange={(e) => handleDateInput(e.target.value, setReportPeriod)}
                   placeholder={`VD: 31/12/${currentYear - 1}`}
                   maxLength={10}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wider transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wider transition-all"
                 />
               </div>
-              <p className="text-[11px] text-slate-400 mt-1">
-                Nhập đầy đủ ngày/tháng/năm theo mẫu <strong className="text-orange-300">dd/mm/yyyy</strong>
-              </p>
             </div>
+          </div>
 
+          {/* LƯU Ý KHI TÍCH "ĐÃ PHÁT HÀNH": HIỆN LƯU Ý NHỚ KIỂM TRA LẠI NGÀY BÁO CÁO */}
+          {releaseStatus === 'Đã phát hành' && (
+            <div className="mt-4 p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-900 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-200 shadow-xs">
+              <span className="text-xl flex-shrink-0 mt-0.5">⚠️</span>
+              <div className="flex-1 text-xs sm:text-sm">
+                <strong className="font-extrabold text-amber-950 block">
+                  Lưu ý quan trọng: Nhớ kiểm tra lại ngày báo cáo! 🎃📝
+                </strong>
+                <span className="text-amber-800 text-xs">
+                  Hợp đồng được đánh dấu là <b>&quot;Đã phát hành&quot;</b>. Vui lòng rà soát chính xác <b>Số báo cáo</b> và <b>Ngày báo cáo ({reportDate || 'chưa điền'})</b> trước khi lưu để dữ liệu đồng bộ lên Google Sheet chính xác 100%.
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Dòng Số báo cáo & Ngày báo cáo */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5 pt-5 border-t border-purple-100">
             {/* Số báo cáo */}
             <div className="md:col-span-2">
-              <label className="block text-sm font-bold text-slate-200 mb-1.5">
-                Số báo cáo <span className="text-orange-400">*</span>
+              <label className="block text-sm font-bold text-slate-800 mb-1.5">
+                Số báo cáo <span className="text-orange-600">*</span>
               </label>
               <input
                 type="text"
                 value={reportNumber}
                 onChange={(e) => setReportNumber(e.target.value)}
                 placeholder="VD: BCKT-086/2026 hoặc 086/BCKT"
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all"
               />
             </div>
 
             {/* Ngày báo cáo */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-sm font-bold text-slate-200 flex items-center gap-1">
-                  Ngày báo cáo <span className="text-orange-400">*</span>
-                  <span className="text-xs font-normal text-slate-400">(dd/mm/yyyy)</span>
+                <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
+                  Ngày báo cáo <span className="text-orange-600">*</span>
+                  <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
                 </label>
                 <button
                   type="button"
                   onClick={() => setToday(setReportDate)}
-                  className="text-[11px] text-purple-400 hover:text-purple-300 font-medium cursor-pointer"
+                  className="text-[11px] text-purple-600 hover:text-purple-700 font-bold cursor-pointer"
                 >
                   Hôm nay
                 </button>
               </div>
               <div className="relative">
-                <Calendar className="w-4 h-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+                <Calendar className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
                 <input
                   type="text"
                   value={reportDate}
                   onChange={(e) => handleDateInput(e.target.value, setReportDate)}
                   placeholder="VD: 25/03/2026"
                   maxLength={10}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono transition-all"
+                  className={`w-full pl-10 pr-4 py-2.5 rounded-xl border text-slate-900 placeholder-slate-400 text-sm font-mono transition-all ${
+                    releaseStatus === 'Đã phát hành'
+                      ? 'bg-amber-50/50 border-amber-300 focus:bg-white focus:ring-2 focus:ring-amber-500'
+                      : 'bg-slate-50 border-slate-300 focus:bg-white focus:ring-2 focus:ring-purple-500'
+                  }`}
                 />
               </div>
             </div>
@@ -724,16 +791,17 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         </div>
 
         {/* SECTION 3: NHÂN SỰ KÝ DUYỆT & Ý KIẾN KIỂM TOÁN */}
-        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl border border-orange-500/20 shadow-xl p-6 sm:p-7 transition-all hover:border-orange-500/35">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-800">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center font-black text-base shadow-md shadow-orange-500/30">
+        <div className="bg-white rounded-3xl border border-orange-200 shadow-md p-6 sm:p-7 transition-all hover:border-orange-400">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-orange-100">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-orange-500/30">
               3
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-white tracking-wide">
-                Thành Viên BGĐ, Kiểm Toán Viên & Ý Kiến Kiểm Toán
+              <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-wide flex items-center gap-1.5">
+                <span>Thành Viên BGĐ, Kiểm Toán Viên & Ý Kiến Kiểm Toán</span>
+                <span>🧙</span>
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Tích chọn người ký báo cáo và nội dung ý kiến kiểm toán
               </p>
             </div>
@@ -741,10 +809,10 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Thành viên Ban Giám đốc */}
-            <div className="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-              <label className="block text-sm font-black text-orange-300 mb-3 flex items-center gap-1.5">
-                <UserCheck className="w-4 h-4 text-orange-400" />
-                Thành viên Ban Giám đốc <span className="text-orange-400">*</span>
+            <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-200">
+              <label className="block text-sm font-black text-orange-900 mb-3 flex items-center gap-1.5">
+                <UserCheck className="w-4 h-4 text-orange-600" />
+                Thành viên Ban Giám đốc <span className="text-orange-600">*</span>
               </label>
               <div className="space-y-2">
                 {BOARD_MEMBERS.map((name) => (
@@ -752,8 +820,8 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     key={name}
                     className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
                       boardMember === name
-                        ? 'bg-gradient-to-r from-orange-500/25 to-amber-500/20 border-orange-500/60 text-orange-200 font-bold shadow-xs'
-                        : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:bg-slate-800/80'
+                        ? 'bg-white border-orange-500 text-orange-950 font-bold shadow-xs'
+                        : 'bg-white/80 border-slate-200 text-slate-700 hover:bg-white'
                     }`}
                   >
                     <input
@@ -762,7 +830,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       value={name}
                       checked={boardMember === name}
                       onChange={() => setBoardMember(name)}
-                      className="text-orange-500 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
+                      className="text-orange-600 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
                     />
                     <span className="text-sm">{name}</span>
                   </label>
@@ -771,7 +839,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
               {boardMember === 'Khác' && (
                 <div className="mt-3">
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Điền tên Thành viên Ban Giám đốc khác:
                   </label>
                   <input
@@ -779,17 +847,17 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={boardMemberOther}
                     onChange={(e) => setBoardMemberOther(e.target.value)}
                     placeholder="Nhập họ và tên Thành viên BGĐ..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-orange-500/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-orange-500 text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-orange-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-orange-500 text-sm"
                   />
                 </div>
               )}
             </div>
 
             {/* Kiểm toán viên */}
-            <div className="bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-              <label className="block text-sm font-black text-purple-300 mb-3 flex items-center gap-1.5">
-                <UserCheck className="w-4 h-4 text-purple-400" />
-                Kiểm toán viên <span className="text-orange-400">*</span>
+            <div className="bg-purple-50/40 p-4 rounded-2xl border border-purple-200">
+              <label className="block text-sm font-black text-purple-900 mb-3 flex items-center gap-1.5">
+                <UserCheck className="w-4 h-4 text-purple-600" />
+                Kiểm toán viên <span className="text-orange-600">*</span>
               </label>
               <div className="space-y-2">
                 {AUDITOR_MEMBERS.map((name) => (
@@ -797,8 +865,8 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     key={name}
                     className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
                       auditor === name
-                        ? 'bg-gradient-to-r from-purple-500/25 to-indigo-500/20 border-purple-500/60 text-purple-200 font-bold shadow-xs'
-                        : 'bg-slate-900/80 border-slate-800 text-slate-300 hover:bg-slate-800/80'
+                        ? 'bg-white border-purple-500 text-purple-950 font-bold shadow-xs'
+                        : 'bg-white/80 border-slate-200 text-slate-700 hover:bg-white'
                     }`}
                   >
                     <input
@@ -807,7 +875,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       value={name}
                       checked={auditor === name}
                       onChange={() => setAuditor(name)}
-                      className="text-purple-500 focus:ring-purple-500 w-4 h-4 cursor-pointer accent-purple-500"
+                      className="text-purple-600 focus:ring-purple-500 w-4 h-4 cursor-pointer accent-purple-600"
                     />
                     <span className="text-sm">{name}</span>
                   </label>
@@ -816,7 +884,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
               {auditor === 'Khác' && (
                 <div className="mt-3">
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
                     Điền tên Kiểm toán viên khác:
                   </label>
                   <input
@@ -824,7 +892,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={auditorOther}
                     onChange={(e) => setAuditorOther(e.target.value)}
                     placeholder="Nhập họ và tên Kiểm toán viên..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-slate-900 border border-purple-500/50 text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-purple-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-purple-500 text-sm"
                   />
                 </div>
               )}
@@ -832,9 +900,9 @@ export const ContractForm: React.FC<ContractFormProps> = ({
           </div>
 
           {/* Ý kiến kiểm toán */}
-          <div className="mt-6 pt-6 border-t border-slate-800">
-            <label className="block text-sm font-black text-slate-200 mb-3">
-              Ý kiến kiểm toán <span className="text-orange-400">*</span>
+          <div className="mt-6 pt-6 border-t border-slate-200">
+            <label className="block text-sm font-black text-slate-800 mb-3">
+              Ý kiến kiểm toán <span className="text-orange-600">*</span>
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {AUDIT_OPINIONS.map((opinion) => (
@@ -842,8 +910,8 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   key={opinion}
                   className={`flex items-center gap-2.5 p-3.5 rounded-2xl cursor-pointer border text-center transition-all ${
                     auditOpinion === opinion
-                      ? 'bg-gradient-to-r from-orange-500/30 to-amber-500/20 border-orange-500 text-orange-200 font-bold shadow-md shadow-orange-500/20'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-300 hover:bg-slate-800/80'
+                      ? 'bg-orange-50 border-orange-500 text-orange-950 font-bold shadow-xs'
+                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   <input
@@ -852,7 +920,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={opinion}
                     checked={auditOpinion === opinion}
                     onChange={() => setAuditOpinion(opinion)}
-                    className="text-orange-500 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
+                    className="text-orange-600 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
                   />
                   <span className="text-xs sm:text-sm text-left">{opinion}</span>
                 </label>
@@ -861,60 +929,60 @@ export const ContractForm: React.FC<ContractFormProps> = ({
           </div>
 
           {/* Thông tin bổ sung ý kiến kiểm toán */}
-          <div className="mt-6 pt-5 border-t border-slate-800">
-            <label className="block text-sm font-bold text-slate-200 mb-2.5">
+          <div className="mt-6 pt-5 border-t border-slate-200">
+            <label className="block text-sm font-bold text-slate-800 mb-2.5">
               Thông tin bổ sung ý kiến kiểm toán:
             </label>
             <div className="flex flex-wrap items-center gap-4 mb-3">
-              <label className="flex items-center gap-2 cursor-pointer bg-slate-950/70 px-3.5 py-2 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
+              <label className="flex items-center gap-2 cursor-pointer bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
                 <input
                   type="checkbox"
                   checked={otherMatters}
                   onChange={(e) => setOtherMatters(e.target.checked)}
-                  className="rounded text-orange-500 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
+                  className="rounded text-orange-600 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
                 />
-                <span className="text-sm font-semibold text-slate-300">Vấn đề khác</span>
+                <span className="text-sm font-semibold text-slate-800">Vấn đề khác</span>
               </label>
 
-              <label className="flex items-center gap-2 cursor-pointer bg-slate-950/70 px-3.5 py-2 rounded-xl border border-slate-800 hover:border-slate-700 transition-colors">
+              <label className="flex items-center gap-2 cursor-pointer bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
                 <input
                   type="checkbox"
                   checked={emphasisOfMatter}
                   onChange={(e) => setEmphasisOfMatter(e.target.checked)}
-                  className="rounded text-orange-500 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
+                  className="rounded text-orange-600 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
                 />
-                <span className="text-sm font-semibold text-slate-300">Nhấn mạnh</span>
+                <span className="text-sm font-semibold text-slate-800">Nhấn mạnh</span>
               </label>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-400 mb-1.5">
-                Dòng trống điền lý do bổ sung {(emphasisOfMatter || otherMatters) && <span className="text-orange-400">*</span>}:
+              <label className="block text-xs font-semibold text-slate-600 mb-1.5">
+                Dòng trống điền lý do bổ sung {(emphasisOfMatter || otherMatters) && <span className="text-orange-600">*</span>}:
               </label>
               <textarea
                 rows={2}
                 value={opinionReason}
                 onChange={(e) => setOpinionReason(e.target.value)}
                 placeholder="Nhập chi tiết nội dung vấn đề khác hoặc vấn đề cần nhấn mạnh trong báo cáo..."
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-950/80 border border-slate-700/80 text-white placeholder-slate-500 focus:ring-2 focus:ring-orange-500 text-sm"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 text-sm"
               />
             </div>
           </div>
         </div>
 
         {/* SECTION 4: THÔNG TIN THỰC HIỆN HỢP ĐỒNG (BẢNG NHÂN SỰ & TỶ LỆ) */}
-        <div className="bg-slate-900/90 backdrop-blur-md rounded-3xl border border-purple-500/25 shadow-xl p-6 sm:p-7 transition-all hover:border-purple-500/40">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-800 gap-3">
+        <div className="bg-white rounded-3xl border border-purple-200 shadow-md p-6 sm:p-7 transition-all hover:border-purple-400">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-purple-100 gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center font-black text-base shadow-md shadow-purple-500/30">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-purple-500/30">
                 4
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-black text-white uppercase tracking-wider flex items-center gap-2">
+                <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <span>Thông Tin Thực Hiện Hợp Đồng</span>
-                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>🔮</span>
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Phân công Vị trí, Tên, Phần hành (chọn nhiều: Q, F tiền, F vay...) và Tỷ lệ thực hiện (%)
                 </p>
               </div>
@@ -923,18 +991,18 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             {/* Total Percentage Indicator */}
             <div className="flex items-center gap-2">
               {totalPercentage === 100 ? (
-                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 rounded-xl font-black text-sm shadow-sm">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-xl font-black text-sm shadow-2xs">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Tổng tỷ lệ: 100% (Đạt chuẩn)</span>
                 </div>
               ) : totalPercentage < 100 ? (
-                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500/15 border border-amber-500/40 text-amber-300 rounded-xl font-black text-sm shadow-sm">
-                  <AlertTriangle className="w-4 h-4 text-amber-400" />
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-50 border border-amber-300 text-amber-800 rounded-xl font-black text-sm shadow-2xs">
+                  <AlertTriangle className="w-4 h-4 text-amber-600" />
                   <span>Tổng: {totalPercentage}% (Thiếu {100 - totalPercentage}%)</span>
                 </div>
               ) : (
-                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-500/15 border border-red-500/40 text-red-300 rounded-xl font-black text-sm shadow-sm">
-                  <AlertTriangle className="w-4 h-4 text-red-400" />
+                <div className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-50 border border-red-300 text-red-800 rounded-xl font-black text-sm shadow-2xs">
+                  <AlertTriangle className="w-4 h-4 text-red-600" />
                   <span>Tổng: {totalPercentage}% (Vượt {totalPercentage - 100}%)</span>
                 </div>
               )}
@@ -942,7 +1010,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <button
                 type="button"
                 onClick={handleAutoBalance}
-                className="px-3.5 py-2 text-xs bg-slate-800 hover:bg-orange-500/20 text-orange-300 border border-slate-700 hover:border-orange-500/40 rounded-xl font-bold transition-all cursor-pointer"
+                className="px-3.5 py-2 text-xs bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl font-bold transition-all cursor-pointer"
                 title="Tự động chia đều cho các thành viên để tổng đủ 100%"
               >
                 Cân đối 100%
@@ -951,22 +1019,23 @@ export const ContractForm: React.FC<ContractFormProps> = ({
           </div>
 
           {/* Table */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-inner">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-2xs">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-950/90 text-orange-300 text-xs uppercase font-black tracking-wider border-b border-slate-800">
+                <tr className="bg-slate-50 text-slate-700 text-xs uppercase font-black tracking-wider border-b border-slate-200">
                   <th className="py-3.5 px-3 w-12 text-center">STT</th>
                   <th className="py-3.5 px-3 min-w-[140px]">Vị trí</th>
                   <th className="py-3.5 px-3 min-w-[160px]">Tên</th>
-                  <th className="py-3.5 px-3 min-w-[240px]">Phần hành (Chọn nhiều)</th>
-                  <th className="py-3.5 px-3 min-w-[140px]">Tỷ lệ thực hiện</th>
+                  <th className="py-3.5 px-3 min-w-[240px]">Phần hành (chọn nhiều)</th>
+                  <th className="py-3.5 px-3 min-w-[120px] text-right">Tỷ lệ thực hiện (%)</th>
                   <th className="py-3.5 px-3 w-12 text-center">Xóa</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800 text-sm">
+              <tbody className="divide-y divide-slate-200 text-xs">
                 {teamMembers.map((member, index) => (
-                  <tr key={member.id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="py-3 px-3 text-center text-slate-500 font-mono text-xs">
+                  <tr key={member.id} className="hover:bg-orange-50/20 transition-colors">
+                    {/* STT */}
+                    <td className="py-3 px-3 text-center text-slate-500 font-bold font-mono">
                       {index + 1}
                     </td>
 
@@ -975,61 +1044,50 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       <input
                         type="text"
                         value={member.position}
-                        onChange={(e) =>
-                          handleUpdateTeamRow(member.id, 'position', e.target.value)
-                        }
-                        placeholder="Nhóm trưởng, Trợ lý..."
-                        className="w-full px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700 text-white placeholder-slate-500 focus:ring-1 focus:ring-orange-500 text-sm"
+                        onChange={(e) => handleUpdateTeamRow(member.id, 'position', e.target.value)}
+                        placeholder="VD: Nhóm trưởng, Trợ lý 1..."
+                        className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 text-xs font-semibold"
                       />
                     </td>
 
-                    {/* Tên (Sổ xuống) */}
+                    {/* Tên */}
                     <td className="py-3 px-3">
                       <select
                         value={member.name}
-                        onChange={(e) =>
-                          handleUpdateTeamRow(member.id, 'name', e.target.value)
-                        }
-                        className="w-full px-3 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700 text-white focus:ring-1 focus:ring-orange-500 text-sm"
+                        onChange={(e) => handleUpdateTeamRow(member.id, 'name', e.target.value)}
+                        className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 text-xs font-bold"
                       >
-                        {TEAM_MEMBERS.map((tm) => (
-                          <option key={tm} value={tm} className="bg-slate-900 text-white">
-                            {tm}
+                        {TEAM_MEMBERS.map((memberName) => (
+                          <option key={memberName} value={memberName}>
+                            {memberName}
                           </option>
                         ))}
                       </select>
                     </td>
 
-                    {/* Phần hành (Cho phép chọn nhiều: Bổ sung Q, phân F tiền, F vay) */}
+                    {/* Phần hành */}
                     <td className="py-3 px-3">
                       <SectionMultiSelect
                         value={member.section}
-                        onChange={(newVal) =>
-                          handleUpdateTeamRow(member.id, 'section', newVal)
-                        }
-                        placeholder="Chọn các phần hành..."
+                        onChange={(val) => handleUpdateTeamRow(member.id, 'section', val)}
+                        placeholder="Chọn phần hành (Q, F tiền, F vay...)"
                       />
                     </td>
 
                     {/* Tỷ lệ thực hiện */}
-                    <td className="py-3 px-3">
-                      <div className="relative">
+                    <td className="py-3 px-3 text-right">
+                      <div className="relative inline-block w-28">
                         <input
                           type="number"
-                          min="0"
-                          max="100"
-                          step="1"
-                          value={member.percentage}
+                          min={1}
+                          max={100}
+                          value={member.percentage || ''}
                           onChange={(e) =>
-                            handleUpdateTeamRow(
-                              member.id,
-                              'percentage',
-                              parseFloat(e.target.value) || 0
-                            )
+                            handleUpdateTeamRow(member.id, 'percentage', Number(e.target.value))
                           }
-                          className="w-full pl-3 pr-8 py-1.5 rounded-xl bg-slate-950/80 border border-slate-700 text-white font-black text-sm focus:ring-1 focus:ring-orange-500"
+                          className="w-full px-3 py-1.5 pr-7 text-right rounded-xl bg-white border border-slate-300 text-slate-900 font-mono font-bold focus:ring-2 focus:ring-orange-500 text-xs"
                         />
-                        <span className="absolute right-3 top-2 text-xs font-bold text-orange-400">
+                        <span className="absolute right-2.5 top-2 text-slate-400 font-bold text-xs pointer-events-none">
                           %
                         </span>
                       </div>
@@ -1040,7 +1098,8 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       <button
                         type="button"
                         onClick={() => handleRemoveTeamRow(member.id)}
-                        className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                        disabled={teamMembers.length <= 1}
+                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         title="Xóa thành viên này"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1050,18 +1109,18 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 ))}
               </tbody>
               <tfoot>
-                <tr className="bg-slate-950/90 border-t-2 border-slate-800 font-black text-white text-sm">
-                  <td colSpan={4} className="py-3.5 px-4 text-right text-slate-300">
+                <tr className="bg-slate-50 border-t-2 border-slate-300 font-black text-xs text-slate-900">
+                  <td colSpan={4} className="py-3 px-3 text-right uppercase tracking-wider">
                     Tổng Tỷ Lệ Thực Hiện:
                   </td>
-                  <td className="py-3.5 px-3">
+                  <td className="py-3 px-3 text-right">
                     <span
-                      className={`text-base font-black ${
+                      className={`text-sm font-black font-mono ${
                         totalPercentage === 100
-                          ? 'text-emerald-400'
+                          ? 'text-emerald-600'
                           : totalPercentage < 100
-                          ? 'text-amber-400'
-                          : 'text-red-400'
+                          ? 'text-amber-600'
+                          : 'text-red-600'
                       }`}
                     >
                       {totalPercentage}%
@@ -1073,38 +1132,36 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             </table>
           </div>
 
-          {/* Add Row Button & Helpers */}
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <button
               type="button"
               onClick={handleAddTeamRow}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-orange-500/25 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold transition-all shadow-2xs cursor-pointer"
             >
               <Plus className="w-4 h-4" />
-              <span>Thêm Thành Viên Vào Nhóm</span>
+              <span>+ Thêm Thành Viên Nhóm (Trợ lý...)</span>
             </button>
 
-            <div className="text-xs text-slate-400 flex items-center gap-1.5">
-              <Percent className="w-3.5 h-3.5 text-orange-400" />
-              <span>Lưu ý: Bắt buộc tổng tỷ lệ thực hiện của cả nhóm phải đúng bằng 100%.</span>
-            </div>
+            <span className="text-xs text-slate-500 italic">
+              * Lưu ý: Tổng phần trăm tất cả các dòng bắt buộc phải bằng 100%
+            </span>
           </div>
         </div>
 
-        {/* BOTTOM ACTION BAR WITH THE PROMINENT 'OK' BUTTON */}
-        <div className="sticky bottom-4 z-30 bg-slate-950/95 backdrop-blur-md p-4 sm:p-5 rounded-3xl border border-orange-500/40 text-white shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-left w-full sm:w-auto">
-            <div className="text-xs text-slate-400">
-              Kiểm tra toàn bộ thông tin hợp đồng & nhóm kiểm toán trước khi bấm OK
+        {/* BOTTOM ACTION BAR */}
+        <div className="bg-white rounded-3xl border border-orange-200 shadow-lg p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div className="text-xs text-slate-500">
+              Kiểm tra toàn bộ thông tin hợp đồng & phân công nhóm kiểm toán
             </div>
-            <div className="text-sm font-semibold text-slate-200 flex items-center gap-2 mt-0.5">
+            <div className="text-sm font-semibold text-slate-800 flex items-center gap-2 mt-0.5">
               <span>Trạng thái:</span>
               {totalPercentage === 100 ? (
-                <span className="text-emerald-400 flex items-center gap-1 font-bold">
-                  <CheckCircle2 className="w-4 h-4" /> Đầy đủ tỷ lệ 100%
+                <span className="text-emerald-600 flex items-center gap-1 font-bold">
+                  <CheckCircle2 className="w-4 h-4" /> Đầy đủ tỷ lệ 100% 🎃
                 </span>
               ) : (
-                <span className="text-amber-400 flex items-center gap-1 font-bold">
+                <span className="text-amber-600 flex items-center gap-1 font-bold">
                   <AlertTriangle className="w-4 h-4" /> Tỷ lệ chưa bằng 100% (Hiện tại {totalPercentage}%)
                 </span>
               )}
@@ -1115,16 +1172,16 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <button
               type="button"
               onClick={handleResetForm}
-              className="px-4 py-3 rounded-2xl border border-slate-700 text-slate-300 hover:text-white hover:bg-slate-800 text-sm font-semibold transition-colors cursor-pointer"
+              className="px-4 py-3 rounded-2xl border border-slate-300 text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-sm font-semibold transition-colors cursor-pointer"
             >
               Làm mới biểu mẫu
             </button>
 
-            {/* NÚT OK CHỮ OK THEO YÊU CẦU */}
+            {/* NÚT OK CHỮ OK THEO YÊU CẦU: font-style: italic; font-weight: normal; font-size: 16px */}
             <button
               type="submit"
               disabled={isSyncing}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600 hover:from-amber-400 hover:via-orange-400 hover:to-purple-500 text-white font-extrabold text-base tracking-wider shadow-xl shadow-orange-500/30 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600 hover:from-amber-600 hover:via-orange-600 hover:to-purple-700 text-white font-extrabold text-base tracking-wider shadow-lg shadow-orange-500/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSyncing ? (
                 <>
@@ -1144,17 +1201,17 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
       {/* ERROR MODAL */}
       {showErrorModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-red-500/40 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center gap-3 text-red-400 mb-4 pb-3 border-b border-slate-800">
-              <div className="w-10 h-10 rounded-2xl bg-red-500/20 border border-red-500/40 flex items-center justify-center flex-shrink-0">
-                <AlertTriangle className="w-6 h-6 text-red-400" />
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-red-300 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3 text-red-600 mb-4 pb-3 border-b border-red-100">
+              <div className="w-10 h-10 rounded-2xl bg-red-100 border border-red-200 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-white">
+                <h3 className="text-lg font-black text-slate-900">
                   Thông Tin Chưa Đầy Đủ Hoặc Chưa Hợp Lệ!
                 </h3>
-                <p className="text-xs text-red-400">
+                <p className="text-xs text-red-600">
                   Vui lòng hoàn thiện các mục sau trước khi bấm OK:
                 </p>
               </div>
@@ -1164,19 +1221,19 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               {errors.map((err, idx) => (
                 <div
                   key={idx}
-                  className="flex items-start gap-2.5 p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-xs text-red-200"
+                  className="flex items-start gap-2.5 p-3 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800"
                 >
-                  <span className="font-bold text-red-400 min-w-[20px]">{idx + 1}.</span>
+                  <span className="font-bold text-red-600 min-w-[20px]">{idx + 1}.</span>
                   <span>{err}</span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end">
+            <div className="mt-6 pt-4 border-t border-slate-200 flex justify-end">
               <button
                 type="button"
                 onClick={() => setShowErrorModal(false)}
-                className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-xl text-sm font-bold transition-colors cursor-pointer"
+                className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-xl text-sm font-bold transition-colors cursor-pointer shadow-sm"
               >
                 Đã hiểu, quay lại chỉnh sửa
               </button>
@@ -1187,55 +1244,72 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
       {/* SUCCESS MODAL */}
       {saveSuccessContract && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-orange-500/40 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center gap-3 text-emerald-400 mb-4 pb-3 border-b border-slate-800">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center flex-shrink-0">
-                <CheckCircle2 className="w-7 h-7 text-emerald-400" />
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-orange-300 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3 text-emerald-600 mb-4 pb-3 border-b border-orange-100">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 border border-emerald-300 flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-7 h-7 text-emerald-600" />
               </div>
               <div>
-                <h3 className="text-lg font-black text-white">
-                  Lưu Hợp Đồng Thành Công!
+                <h3 className="text-lg font-black text-slate-900 flex items-center gap-1.5">
+                  <span>Lưu Hợp Đồng Thành Công!</span>
+                  <span>🎃</span>
                 </h3>
-                <p className="text-xs text-orange-300 font-medium">
+                <p className="text-xs text-orange-700 font-bold">
                   Số HĐ: {saveSuccessContract.contractNumber} • {saveSuccessContract.customerName}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-2.5 text-sm text-slate-300 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+            <div className="space-y-2.5 text-sm text-slate-700 bg-orange-50/40 p-4 rounded-2xl border border-orange-200">
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400">Mã KH:</span>
-                <span className="font-mono font-bold text-white">{saveSuccessContract.customerCode}</span>
+                <span className="text-slate-500">Mã KH:</span>
+                <span className="font-mono font-bold text-slate-900">{saveSuccessContract.customerCode}</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400">Dịch vụ:</span>
-                <span className="font-semibold text-orange-300">{saveSuccessContract.service}</span>
+                <span className="text-slate-500">Dịch vụ:</span>
+                <span className="font-semibold text-orange-800">{saveSuccessContract.service}</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400">Loại báo cáo:</span>
-                <span className="font-semibold text-purple-300">{saveSuccessContract.reportType}</span>
+                <span className="text-slate-500">Loại báo cáo:</span>
+                <span className="font-semibold text-purple-800">{saveSuccessContract.reportType}</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400">Kỳ báo cáo:</span>
-                <span className="font-mono text-white">{saveSuccessContract.reportPeriod}</span>
+                <span className="text-slate-500">Tình trạng phát hành:</span>
+                <span
+                  className={`font-bold px-2 py-0.5 rounded text-[11px] ${
+                    saveSuccessContract.releaseStatus === 'Đã phát hành'
+                      ? 'bg-orange-100 text-orange-800 border border-orange-300'
+                      : 'bg-slate-100 text-slate-700 border border-slate-300'
+                  }`}
+                >
+                  {saveSuccessContract.releaseStatus}
+                </span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400">Nhân sự ký:</span>
+                <span className="text-slate-500">Kỳ báo cáo:</span>
+                <span className="font-mono text-slate-900">{saveSuccessContract.reportPeriod}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500">Ngày báo cáo:</span>
+                <span className="font-mono text-slate-900">{saveSuccessContract.reportDate}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500">Nhân sự ký:</span>
                 <span>BGĐ: {saveSuccessContract.boardMember} | KTV: {saveSuccessContract.auditor}</span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-slate-400">Nhóm thực hiện:</span>
-                <span className="font-bold text-orange-400">
+                <span className="text-slate-500">Nhóm thực hiện:</span>
+                <span className="font-bold text-orange-700">
                   {saveSuccessContract.teamMembers.length} thành viên (Tổng 100%)
                 </span>
               </div>
 
               {/* Sheet sync feedback */}
-              <div className="pt-2.5 border-t border-slate-800 mt-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Đã tự động gửi dữ liệu về file Google Sheet của bạn!</span>
+              <div className="pt-2.5 border-t border-orange-200 mt-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-700">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <span>Đã tự động gửi dữ liệu về file Google Sheet của bạn! 🎃</span>
                 </div>
               </div>
             </div>
@@ -1247,14 +1321,14 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   setSaveSuccessContract(null);
                   handleResetForm();
                 }}
-                className="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors cursor-pointer"
               >
                 Nhập Hợp Đồng Tiếp Theo
               </button>
               <button
                 type="button"
                 onClick={() => setSaveSuccessContract(null)}
-                className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-xl text-xs font-bold shadow-md shadow-orange-500/25 transition-colors cursor-pointer"
+                className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors cursor-pointer"
               >
                 Xem Hợp Đồng Vừa Lưu
               </button>

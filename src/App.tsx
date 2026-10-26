@@ -118,7 +118,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans antialiased text-slate-100 selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen bg-white flex flex-col font-sans antialiased text-slate-800 selection:bg-orange-500 selection:text-white">
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -130,28 +130,28 @@ export default function App() {
       {notification && (
         <div className="fixed top-24 right-4 z-50 max-w-md animate-in slide-in-from-top-4 duration-200">
           <div
-            className={`p-4 rounded-2xl shadow-2xl border flex items-start gap-3 ${
+            className={`p-4 rounded-2xl shadow-xl border flex items-start gap-3 ${
               notification.type === 'success'
-                ? 'bg-slate-900/95 text-white border-emerald-500/50 shadow-emerald-950/40'
+                ? 'bg-white text-slate-800 border-emerald-300 shadow-emerald-100'
                 : notification.type === 'warning'
-                ? 'bg-slate-900/95 text-white border-amber-500/50 shadow-amber-950/40'
-                : 'bg-slate-900/95 text-white border-red-500/50 shadow-red-950/40'
+                ? 'bg-white text-slate-800 border-amber-300 shadow-amber-100'
+                : 'bg-white text-slate-800 border-red-300 shadow-red-100'
             }`}
           >
             {notification.type === 'success' ? (
-              <CheckCircle2 className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
             ) : notification.type === 'warning' ? (
-              <AlertCircle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             ) : (
-              <ShieldAlert className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <ShieldAlert className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
             )}
-            <div className="text-xs sm:text-sm font-medium flex-1">{notification.message}</div>
+            <div className="text-xs sm:text-sm font-semibold flex-1">{notification.message}</div>
           </div>
         </div>
       )}
 
       {/* Main Content Body */}
-      <main className="flex-1 pb-16">
+      <main className="flex-1 pb-16 bg-white">
         {activeTab === 'form' && (
           <ContractForm
             onSaveContract={handleSaveContract}
@@ -183,17 +183,17 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="bg-slate-950/95 text-slate-400 text-xs py-6 border-t border-orange-500/20">
+      <footer className="bg-slate-50 text-slate-600 text-xs py-6 border-t border-orange-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-orange-300">QUẢN LÝ HỢP ĐỒNG KIỂM TOÁN</span>
+            <span className="font-extrabold text-orange-700">QUẢN LÝ HỢP ĐỒNG KIỂM TOÁN</span>
             <span>•</span>
-            <span>Mùa Kiểm Toán 2026</span>
+            <span className="font-medium">Mùa Kiểm Toán 2026 🎃🦇</span>
           </div>
-          <div className="flex items-center gap-4 text-slate-400">
-            <span>Tự động lưu về Google Sheet riêng của bạn</span>
+          <div className="flex items-center gap-4 text-slate-500 font-medium">
+            <span>Tự động lưu về Google Sheet riêng của bạn 👻</span>
             <span>•</span>
-            <span>Phân công nhóm tỷ lệ chuẩn 100%</span>
+            <span>Phân công nhóm tỷ lệ chuẩn 100% 🍬</span>
           </div>
         </div>
       </footer>

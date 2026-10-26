@@ -13,6 +13,7 @@ const INITIAL_SAMPLE_CONTRACTS: AuditContract[] = [
     contractDate: '15/01/2026',
     service: 'Kiểm toán',
     reportType: 'Riêng',
+    releaseStatus: 'Đã phát hành',
     reportPeriod: '31/12/2025',
     reportNumber: 'BCKT-086/2026',
     reportDate: '15/03/2026',
@@ -66,6 +67,7 @@ const INITIAL_SAMPLE_CONTRACTS: AuditContract[] = [
     contractDate: '20/02/2026',
     service: 'Soát xét',
     reportType: 'Hợp nhất',
+    releaseStatus: 'Chưa phát hành',
     reportPeriod: '30/06/2026',
     reportNumber: 'SX-112/2026',
     reportDate: '25/08/2026',
@@ -114,10 +116,11 @@ export function getStoredContracts(): AuditContract[] {
       return INITIAL_SAMPLE_CONTRACTS;
     }
     const parsed: AuditContract[] = JSON.parse(raw);
-    // Ensure all records have reportType
+    // Ensure all records have reportType and releaseStatus
     return parsed.map((c) => ({
       ...c,
       reportType: c.reportType || 'Riêng',
+      releaseStatus: c.releaseStatus || 'Chưa phát hành',
     }));
   } catch (err) {
     console.error('Lỗi đọc danh sách hợp đồng:', err);
@@ -185,6 +188,7 @@ export function exportContractsToCSV(contracts: AuditContract[]): void {
     'Ngày Hợp Đồng',
     'Dịch Vụ',
     'Loại Báo Cáo',
+    'Phát Hành',
     'Kỳ Báo Cáo',
     'Số Báo Cáo',
     'Ngày Báo Cáo',
@@ -216,6 +220,7 @@ export function exportContractsToCSV(contracts: AuditContract[]): void {
       `"${c.contractDate}"`,
       `"${c.service === 'Khác' ? c.serviceOther || 'Khác' : c.service}"`,
       `"${reportTypeVal}"`,
+      `"${c.releaseStatus || 'Chưa phát hành'}"`,
       `"${c.reportPeriod}"`,
       `"${c.reportNumber.replace(/"/g, '""')}"`,
       `"${c.reportDate}"`,

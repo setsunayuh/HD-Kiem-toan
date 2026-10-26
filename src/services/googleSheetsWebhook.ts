@@ -15,6 +15,7 @@ export const CONTRACT_HEADERS = [
   'Ngày Hợp Đồng',
   'Dịch Vụ',
   'Loại Báo Cáo',
+  'Phát Hành',
   'Kỳ Báo Cáo',
   'Số Báo Cáo',
   'Ngày Báo Cáo',
@@ -184,6 +185,7 @@ export function formatContractToRow(contract: AuditContract): (string | number)[
       ? `Khác: ${contract.serviceOther}`
       : contract.service,
     reportTypeVal,
+    contract.releaseStatus || 'Chưa phát hành',
     contract.reportPeriod,
     contract.reportNumber,
     contract.reportDate,
@@ -271,6 +273,7 @@ export async function sendContractToSheetWebhook(
     contractDate: contract.contractDate,
     service: serviceVal,
     reportType: reportTypeVal,
+    releaseStatus: contract.releaseStatus || 'Chưa phát hành',
     reportPeriod: contract.reportPeriod,
     reportNumber: contract.reportNumber,
     reportDate: contract.reportDate,
@@ -291,6 +294,7 @@ export async function sendContractToSheetWebhook(
     ngayHopDong: contract.contractDate,
     dichVu: serviceVal,
     loaiBaoCao: reportTypeVal,
+    phatHanh: contract.releaseStatus || 'Chưa phát hành',
     kyBaoCao: contract.reportPeriod,
     soBaoCao: contract.reportNumber,
     ngayBaoCao: contract.reportDate,
@@ -310,6 +314,7 @@ export async function sendContractToSheetWebhook(
     'Ngày Hợp Đồng': contract.contractDate,
     'Dịch Vụ': serviceVal,
     'Loại Báo Cáo': reportTypeVal,
+    'Phát Hành': contract.releaseStatus || 'Chưa phát hành',
     'Kỳ Báo Cáo': contract.reportPeriod,
     'Số Báo Cáo': contract.reportNumber,
     'Ngày Báo Cáo': contract.reportDate,
@@ -338,6 +343,8 @@ export async function sendContractToSheetWebhook(
   urlObj.searchParams.set('contractDate', contract.contractDate);
   urlObj.searchParams.set('service', serviceVal);
   urlObj.searchParams.set('reportType', reportTypeVal);
+  urlObj.searchParams.set('releaseStatus', contract.releaseStatus || 'Chưa phát hành');
+  urlObj.searchParams.set('phatHanh', contract.releaseStatus || 'Chưa phát hành');
   urlObj.searchParams.set('reportPeriod', contract.reportPeriod);
   urlObj.searchParams.set('reportNumber', contract.reportNumber);
   urlObj.searchParams.set('reportDate', contract.reportDate);

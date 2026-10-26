@@ -66,7 +66,7 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
       {/* Trigger Box */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="min-h-[38px] w-full px-2.5 py-1.5 bg-slate-900/90 hover:bg-slate-900 border border-slate-700/80 hover:border-orange-500/60 focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500 rounded-xl cursor-pointer flex items-center justify-between gap-1.5 transition-all shadow-inner"
+        className="min-h-[38px] w-full px-2.5 py-1.5 bg-white hover:bg-orange-50/30 border border-slate-300 hover:border-orange-500 focus-within:border-orange-500 focus-within:ring-2 focus-within:ring-orange-200 rounded-xl cursor-pointer flex items-center justify-between gap-1.5 transition-all shadow-xs"
       >
         <div className="flex flex-wrap items-center gap-1 max-w-[calc(100%-24px)]">
           {selectedSections.length === 0 ? (
@@ -75,14 +75,14 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
             selectedSections.map((sec) => (
               <span
                 key={sec}
-                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-orange-200 border border-orange-500/40 shadow-xs"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-orange-50 text-orange-800 border border-orange-200 shadow-2xs"
               >
                 <span>{sec}</span>
                 <span
                   role="button"
                   tabIndex={0}
                   onClick={(e) => removeSection(e, sec)}
-                  className="hover:text-red-400 rounded cursor-pointer transition-colors"
+                  className="hover:text-red-600 rounded cursor-pointer transition-colors"
                 >
                   <X className="w-2.5 h-2.5" />
                 </span>
@@ -97,14 +97,14 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
               type="button"
               onClick={clearAll}
               title="Xóa tất cả phần hành đã chọn"
-              className="p-0.5 hover:text-orange-400 rounded text-[10px] cursor-pointer"
+              className="p-0.5 hover:text-orange-600 rounded text-[10px] cursor-pointer"
             >
               <X className="w-3 h-3" />
             </button>
           )}
           <ChevronDown
-            className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-400 ${
-              isOpen ? 'rotate-180 text-orange-400' : ''
+            className={`w-3.5 h-3.5 transition-transform duration-200 text-slate-500 ${
+              isOpen ? 'rotate-180 text-orange-600' : ''
             }`}
           />
         </div>
@@ -112,17 +112,17 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
 
       {/* Popover Dropdown */}
       {isOpen && (
-        <div className="absolute left-0 top-full mt-2 z-50 w-80 sm:w-96 bg-slate-900/98 backdrop-blur-md border border-orange-500/40 rounded-2xl shadow-2xl p-3.5 animate-in fade-in zoom-in-95 duration-150">
-          <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-slate-800">
-            <span className="text-xs font-bold text-orange-300 uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              Chọn Phần Hành ({selectedSections.length} đã chọn)
+        <div className="absolute left-0 top-full mt-2 z-50 w-80 sm:w-96 bg-white border border-orange-300 rounded-2xl shadow-2xl p-3.5 animate-in fade-in zoom-in-95 duration-150">
+          <div className="flex items-center justify-between pb-2.5 mb-2.5 border-b border-orange-100">
+            <span className="text-xs font-bold text-orange-700 uppercase tracking-wider flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              🎃 Chọn Phần Hành ({selectedSections.length} đã chọn)
             </span>
             {selectedSections.length > 0 && (
               <button
                 type="button"
                 onClick={clearAll}
-                className="text-[11px] text-orange-400 hover:text-orange-300 hover:underline font-medium cursor-pointer"
+                className="text-[11px] text-orange-600 hover:text-orange-700 hover:underline font-bold cursor-pointer"
               >
                 Bỏ chọn hết
               </button>
@@ -134,28 +134,28 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
             <button
               type="button"
               onClick={() => selectGroup(['Báo cáo', 'IFRS'])}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-orange-500/20 text-slate-300 hover:text-orange-200 border border-slate-700/80 font-medium transition-colors cursor-pointer"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 font-semibold transition-colors cursor-pointer"
             >
               + Báo cáo, IFRS
             </button>
             <button
               type="button"
               onClick={() => selectGroup(['A', 'B', 'C', 'D'])}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-orange-500/20 text-slate-300 hover:text-orange-200 border border-slate-700/80 font-medium transition-colors cursor-pointer"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-medium transition-colors cursor-pointer"
             >
               + A, B, C, D
             </button>
             <button
               type="button"
               onClick={() => selectGroup(['F tiền', 'F vay'])}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-orange-950/60 hover:bg-orange-900/80 text-orange-300 border border-orange-500/40 font-semibold transition-colors cursor-pointer"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold transition-colors cursor-pointer"
             >
               + F tiền, F vay
             </button>
             <button
               type="button"
               onClick={() => selectGroup(['Q', 'P', 'R'])}
-              className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-950/60 hover:bg-purple-900/80 text-purple-300 border border-purple-500/40 font-semibold transition-colors cursor-pointer"
+              className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 font-bold transition-colors cursor-pointer"
             >
               + Q, P, R
             </button>
@@ -173,10 +173,10 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
                   onClick={() => toggleSection(sec)}
                   className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold shadow-md shadow-orange-500/30'
+                      ? 'bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold shadow-sm shadow-orange-500/30'
                       : isHighlight
-                      ? 'bg-orange-950/40 hover:bg-orange-900/60 text-orange-300 border border-orange-500/30 font-medium'
-                      : 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/60'
+                      ? 'bg-orange-50/80 hover:bg-orange-100 text-orange-900 border border-orange-300 font-semibold'
+                      : 'bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200'
                   }`}
                 >
                   <span className="truncate">{sec}</span>
@@ -186,12 +186,12 @@ export const SectionMultiSelect: React.FC<SectionMultiSelectProps> = ({
             })}
           </div>
 
-          <div className="mt-3 pt-2.5 border-t border-slate-800 flex justify-between items-center">
-            <span className="text-[10px] text-slate-400 italic">Có thể chọn nhiều phần hành cùng lúc</span>
+          <div className="mt-3 pt-2.5 border-t border-orange-100 flex justify-between items-center">
+            <span className="text-[10px] text-slate-500 italic">Có thể chọn nhiều phần hành</span>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="px-3.5 py-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-lg text-xs font-bold shadow-sm transition-all cursor-pointer"
+              className="px-3.5 py-1 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-lg text-xs font-bold shadow-xs transition-all cursor-pointer"
             >
               Đồng ý
             </button>

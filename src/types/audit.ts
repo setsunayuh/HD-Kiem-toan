@@ -15,6 +15,13 @@ export const REPORT_TYPE_OPTIONS: ReportType[] = [
   'Khác',
 ];
 
+export type ReleaseStatus = 'Đã phát hành' | 'Chưa phát hành';
+
+export const RELEASE_STATUS_OPTIONS: ReleaseStatus[] = [
+  'Chưa phát hành',
+  'Đã phát hành',
+];
+
 export const BOARD_MEMBERS = [
   'Bùi Tuyết Vân',
   'Nguyễn Ngọc Thùy Dung',
@@ -97,6 +104,7 @@ export interface AuditContract {
   serviceOther?: string; // If service is Khác
   reportType: ReportType; // Riêng, Hợp nhất, Khác
   reportTypeOther?: string; // If reportType is Khác
+  releaseStatus: ReleaseStatus; // Đã phát hành, Chưa phát hành
   reportPeriod: string; // Mẫu dd/mm/yyyy (Ví dụ: 31/12/2025)
   reportNumber: string; // Số báo cáo
   reportDate: string; // dd/mm/yyyy
