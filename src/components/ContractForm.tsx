@@ -328,6 +328,11 @@ export const ContractForm: React.FC<ContractFormProps> = ({
     // 13. Ý kiến kiểm toán
     if (!auditOpinion) {
       errs.push('Ý kiến kiểm toán: Chưa chọn ý kiến kiểm toán.');
+    } else if (
+      (auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược') &&
+      !opinionReason.trim()
+    ) {
+      errs.push(`Ý kiến kiểm toán: Khi tích chọn "${auditOpinion}", bắt buộc phải điền lý do vào ô thông tin bổ sung.`);
     }
 
     // 14. Thông tin bổ sung ý kiến kiểm toán
@@ -947,9 +952,14 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
           {/* Ý kiến kiểm toán */}
           <div className="mt-6 pt-6 border-t border-slate-200">
-            <label className="block text-sm font-black text-slate-800 mb-3">
-              Ý kiến kiểm toán <span className="text-orange-600">*</span>
-            </label>
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <label className="text-sm font-black text-slate-800 flex items-center gap-1.5">
+                <span>Ý kiến kiểm toán</span> <span className="text-orange-600">*</span>
+              </label>
+              <span className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                ⚠️ Lưu ý: Tích chọn Ngoại trừ, Từ chối, Trái ngược phải điền lý do
+              </span>
+            </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {AUDIT_OPINIONS.map((opinion) => (
                 <label
@@ -972,6 +982,16 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 </label>
               ))}
             </div>
+
+            {/* Cảnh báo khi chọn Ngoại trừ, Từ chối, Trái ngược */}
+            {(auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược') && (
+              <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs flex items-center gap-2.5 animate-in fade-in duration-200 shadow-xs">
+                <span className="text-xl flex-shrink-0">⚠️</span>
+                <span className="font-medium">
+                  <strong className="text-amber-950 font-black">Lưu ý quan trọng:</strong> Bạn đang chọn ý kiến <strong>&quot;{auditOpinion}&quot;</strong>. Bắt buộc phải điền chi tiết lý do vào ô thông tin bổ sung bên dưới!
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Thông tin bổ sung ý kiến kiểm toán */}
@@ -1002,15 +1022,29 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-                Dòng trống điền lý do bổ sung {(emphasisOfMatter || otherMatters) && <span className="text-orange-600">*</span>}:
+              <label className="block text-xs font-bold text-slate-700 mb-1.5 flex flex-wrap items-center justify-between gap-2">
+                <span>
+                  Lý do bổ sung ý kiến kiểm toán{' '}
+                  {(auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược' || emphasisOfMatter || otherMatters) && (
+                    <span className="text-orange-600 font-extrabold">* (Bắt buộc điền)</span>
+                  )}:
+                </span>
+                {(auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược') && (
+                  <span className="text-[11px] text-amber-900 font-bold bg-amber-100 px-2 py-0.5 rounded-md border border-amber-300">
+                    ⚠️ Tích chọn &quot;{auditOpinion}&quot; phải điền lý do
+                  </span>
+                )}
               </label>
               <textarea
-                rows={2}
+                rows={3}
                 value={opinionReason}
                 onChange={(e) => setOpinionReason(e.target.value)}
-                placeholder="Nhập chi tiết nội dung vấn đề khác hoặc vấn đề cần nhấn mạnh trong báo cáo..."
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 text-sm"
+                placeholder="Nhập lý do Ngoại trừ, Từ chối, Trái ngược. Nội dung vấn đề khác hoặc vấn đề cần nhấn mạnh trong báo cáo."
+                className={`w-full px-4 py-2.5 rounded-xl border text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 text-sm transition-all shadow-2xs ${
+                  (auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược') && !opinionReason.trim()
+                    ? 'bg-amber-50/60 border-amber-400'
+                    : 'bg-slate-50 border-slate-300'
+                }`}
               />
             </div>
           </div>
