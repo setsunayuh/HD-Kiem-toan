@@ -445,9 +445,6 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <span>Biểu Mẫu Nhập Hợp Đồng & Phân Công Nhóm</span>
               <span className="text-xl">🕯️</span>
             </h2>
-            <p className="text-slate-600 text-xs sm:text-sm mt-1.5 max-w-2xl leading-relaxed">
-              Nhập đầy đủ thông tin hợp đồng, kiểm tra tình trạng phát hành, phân bổ tỷ lệ nhóm (tổng 100%), bấm OK sẽ tự động lưu về Google Sheet của bạn. 🎃✨
-            </p>
           </div>
 
           <div className="flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-2xl bg-white border border-orange-300 text-orange-700 shadow-sm">

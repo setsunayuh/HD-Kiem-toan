@@ -195,10 +195,6 @@ export default function App() {
               <span>🎃</span>
               <span>&ldquo;Đi làm đừng đi lầm&rdquo;</span>
             </span>
-            <span>•</span>
-            <span>Tự động lưu về Google Sheet riêng của bạn 👻</span>
-            <span>•</span>
-            <span>Phân công nhóm tỷ lệ chuẩn 100% 🍬</span>
           </div>
         </div>
       </footer>
