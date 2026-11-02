@@ -433,27 +433,34 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
   return (
     <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6">
-      {/* Banner Christmas 2026: Elegant Pine Green, Rose Ruby, Champagne Gold, and Snowy Accents */}
-      <div className="mb-6 relative rounded-3xl overflow-hidden p-6 sm:p-7 bg-gradient-to-r from-emerald-600/10 via-teal-600/10 to-rose-600/10 border-2 border-emerald-300 shadow-md">
-        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      {/* Banner Christmas 2026: Nordic Luxury Festive Design */}
+      <div className="mb-6 relative rounded-3xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-emerald-900 via-teal-950 to-rose-950 text-white shadow-xl shadow-emerald-950/20 border-2 border-amber-400/40 relative">
+        {/* Subtle festive glow overlay */}
+        <div className="absolute -right-12 -top-12 w-48 h-48 bg-amber-400/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -left-12 -bottom-12 w-48 h-48 bg-rose-500/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
           <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-emerald-700 text-white shadow-xs">
-                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-                🎄 Christmas Audit Season 2026 ❄️
+            <div className="flex flex-wrap items-center gap-2 mb-2.5">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-amber-400/20 text-amber-200 border border-amber-400/40 shadow-xs backdrop-blur-md">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />
+                ✨ Luxury Christmas Audit 2026 🎄
               </span>
-              <span className="text-xs text-rose-700 font-bold bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
-                🎁 Mùa Kiểm Toán Giáng Sinh 2026 ✨
+              <span className="text-xs text-rose-200 font-bold bg-rose-900/60 px-3 py-1 rounded-full border border-rose-500/40 backdrop-blur-md">
+                🎁 Phiên Bản Mùa Lễ Hội Giáng Sinh ❄️
               </span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 flex items-center gap-2">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-2 drop-shadow-sm">
               <span>Biểu Mẫu Nhập Hợp Đồng & Phân Công Nhóm</span>
-              <span className="text-xl">🎄</span>
+              <span className="text-2xl">🎄✨</span>
             </h2>
+            <p className="text-xs sm:text-sm text-emerald-100/80 mt-1 max-w-2xl">
+              Hệ thống kiểm soát chất lượng kiểm toán chuẩn mực • Tự động tính toán &amp; ghi nhận dữ liệu trực tiếp về Google Sheets ❄️
+            </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-2xl bg-white border border-emerald-300 text-emerald-800 shadow-xs">
-            <Sparkles className="w-4 h-4 text-emerald-600" />
+          <div className="flex items-center gap-2 text-xs font-black px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/15 border border-white/20 text-white shadow-lg backdrop-blur-md transition-all">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
             <span>Tự Động Lưu Sheet ❄️</span>
           </div>
         </div>
@@ -842,9 +849,9 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         </div>
 
         {/* SECTION 3: NHÂN SỰ KÝ DUYỆT & Ý KIẾN KIỂM TOÁN */}
-        <div className="bg-white rounded-3xl border border-emerald-200 shadow-md p-6 sm:p-7 transition-all hover:border-emerald-400">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-emerald-100">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-emerald-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-amber-500/30">
+        <div className="bg-white rounded-3xl border-2 border-emerald-200/90 shadow-lg p-6 sm:p-7 transition-all hover:border-emerald-300">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-slate-200">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-600 via-amber-500 to-emerald-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-rose-600/30">
               3
             </div>
             <div>
@@ -859,136 +866,189 @@ export const ContractForm: React.FC<ContractFormProps> = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Thành viên Ban Giám đốc */}
-            <div className="bg-emerald-50/30 p-4 rounded-2xl border border-emerald-200">
-              <label className="block text-sm font-black text-emerald-900 mb-3 flex items-center gap-1.5">
-                <UserCheck className="w-4 h-4 text-emerald-600" />
-                Thành viên Ban Giám đốc <span className="text-rose-600">*</span>
-              </label>
-              <div className="space-y-2">
-                {BOARD_MEMBERS.map((name) => (
-                  <label
-                    key={name}
-                    className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
-                      boardMember === name
-                        ? 'bg-white border-emerald-500 text-emerald-950 font-bold shadow-xs'
-                        : 'bg-white/80 border-slate-200 text-slate-700 hover:bg-white'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="boardMember"
-                      value={name}
-                      checked={boardMember === name}
-                      onChange={() => setBoardMember(name)}
-                      className="text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer accent-emerald-600"
-                    />
-                    <span className="text-sm">{name}</span>
+            {/* 1. Bảng Thành viên Ban Giám đốc (Tông màu Đỏ Rượu Vang - Velvet Burgundy riêng biệt) */}
+            <div className="bg-gradient-to-br from-rose-50/80 via-white to-pink-50/50 p-4 sm:p-5 rounded-2xl border-2 border-rose-300 shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-rose-200">
+                  <label className="text-sm font-black text-rose-950 flex items-center gap-2">
+                    <span className="p-1.5 rounded-xl bg-rose-100 text-rose-700 shadow-2xs">
+                      <UserCheck className="w-4 h-4" />
+                    </span>
+                    <span>Thành viên Ban Giám đốc</span> <span className="text-rose-600">*</span>
                   </label>
-                ))}
-              </div>
-
-              {boardMember === 'Khác' && (
-                <div className="mt-3">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Điền tên Thành viên Ban Giám đốc khác:
-                  </label>
-                  <input
-                    type="text"
-                    value={boardMemberOther}
-                    onChange={(e) => setBoardMemberOther(e.target.value)}
-                    placeholder="Nhập họ và tên Thành viên BGĐ..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-emerald-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 text-sm"
-                  />
+                  <span className="text-[11px] font-black text-rose-800 bg-rose-100 px-2.5 py-0.5 rounded-full border border-rose-200 shadow-2xs">
+                    BGĐ Ký Duyệt
+                  </span>
                 </div>
-              )}
+                <div className="space-y-2">
+                  {BOARD_MEMBERS.map((name) => {
+                    const isSelected = boardMember === name;
+                    return (
+                      <label
+                        key={name}
+                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
+                          isSelected
+                            ? 'bg-rose-100/90 border-2 border-rose-600 text-rose-950 font-black shadow-xs ring-2 ring-rose-300/60'
+                            : 'bg-white border-rose-100 text-slate-700 hover:bg-rose-50/50 hover:border-rose-300'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="boardMember"
+                          value={name}
+                          checked={isSelected}
+                          onChange={() => setBoardMember(name)}
+                          className="text-rose-600 focus:ring-rose-500 w-4 h-4 cursor-pointer accent-rose-600"
+                        />
+                        <span className="text-sm font-bold">{name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                {boardMember === 'Khác' && (
+                  <div className="mt-3 p-3 bg-white rounded-xl border border-rose-300 shadow-2xs">
+                    <label className="block text-xs font-bold text-rose-900 mb-1">
+                      Điền tên Thành viên Ban Giám đốc khác:
+                    </label>
+                    <input
+                      type="text"
+                      value={boardMemberOther}
+                      onChange={(e) => setBoardMemberOther(e.target.value)}
+                      placeholder="Nhập họ và tên Thành viên BGĐ..."
+                      className="w-full px-3.5 py-2 rounded-xl bg-rose-50/40 border border-rose-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-rose-500 text-sm font-semibold"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Kiểm toán viên */}
-            <div className="bg-teal-50/30 p-4 rounded-2xl border border-teal-200">
-              <label className="block text-sm font-black text-teal-900 mb-3 flex items-center gap-1.5">
-                <UserCheck className="w-4 h-4 text-teal-600" />
-                Kiểm toán viên <span className="text-rose-600">*</span>
-              </label>
-              <div className="space-y-2">
-                {AUDITOR_MEMBERS.map((name) => (
-                  <label
-                    key={name}
-                    className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
-                      auditor === name
-                        ? 'bg-white border-teal-500 text-teal-950 font-bold shadow-xs'
-                        : 'bg-white/80 border-slate-200 text-slate-700 hover:bg-white'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="auditor"
-                      value={name}
-                      checked={auditor === name}
-                      onChange={() => setAuditor(name)}
-                      className="text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer accent-teal-600"
-                    />
-                    <span className="text-sm">{name}</span>
+            {/* 2. Bảng Kiểm toán viên (Tông màu Xanh Thông Giáng Sinh - Pine Emerald riêng biệt) */}
+            <div className="bg-gradient-to-br from-emerald-50/80 via-white to-teal-50/50 p-4 sm:p-5 rounded-2xl border-2 border-emerald-300 shadow-xs flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between pb-3 mb-3 border-b border-emerald-200">
+                  <label className="text-sm font-black text-emerald-950 flex items-center gap-2">
+                    <span className="p-1.5 rounded-xl bg-emerald-100 text-emerald-700 shadow-2xs">
+                      <UserCheck className="w-4 h-4" />
+                    </span>
+                    <span>Kiểm toán viên hành nghề</span> <span className="text-rose-600">*</span>
                   </label>
-                ))}
-              </div>
-
-              {auditor === 'Khác' && (
-                <div className="mt-3">
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Điền tên Kiểm toán viên khác:
-                  </label>
-                  <input
-                    type="text"
-                    value={auditorOther}
-                    onChange={(e) => setAuditorOther(e.target.value)}
-                    placeholder="Nhập họ và tên Kiểm toán viên..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-teal-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-teal-500 text-sm"
-                  />
+                  <span className="text-[11px] font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
+                    KTV Ký Báo Cáo
+                  </span>
                 </div>
-              )}
+                <div className="space-y-2">
+                  {AUDITOR_MEMBERS.map((name) => {
+                    const isSelected = auditor === name;
+                    return (
+                      <label
+                        key={name}
+                        className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
+                          isSelected
+                            ? 'bg-emerald-100/90 border-2 border-emerald-600 text-emerald-950 font-black shadow-xs ring-2 ring-emerald-300/60'
+                            : 'bg-white border-emerald-100 text-slate-700 hover:bg-emerald-50/50 hover:border-emerald-300'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="auditor"
+                          value={name}
+                          checked={isSelected}
+                          onChange={() => setAuditor(name)}
+                          className="text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer accent-emerald-600"
+                        />
+                        <span className="text-sm font-bold">{name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+
+                {auditor === 'Khác' && (
+                  <div className="mt-3 p-3 bg-white rounded-xl border border-emerald-300 shadow-2xs">
+                    <label className="block text-xs font-bold text-emerald-900 mb-1">
+                      Điền tên Kiểm toán viên khác:
+                    </label>
+                    <input
+                      type="text"
+                      value={auditorOther}
+                      onChange={(e) => setAuditorOther(e.target.value)}
+                      placeholder="Nhập họ và tên Kiểm toán viên..."
+                      className="w-full px-3.5 py-2 rounded-xl bg-emerald-50/40 border border-emerald-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 text-sm font-semibold"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Ý kiến kiểm toán */}
+          {/* Ý kiến kiểm toán: Ngoại trừ -> Màu Vàng, Từ chối / Trái ngược -> Màu Đỏ, Toàn phần -> Màu Xanh */}
           <div className="mt-6 pt-6 border-t border-slate-200">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
               <label className="text-sm font-black text-slate-800 flex items-center gap-1.5">
                 <span>Ý kiến kiểm toán</span> <span className="text-rose-600">*</span>
               </label>
-              <span className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
-                ⚠️ Lưu ý: Tích chọn Ngoại trừ, Từ chối, Trái ngược phải điền lý do
+              <span className="text-xs font-bold text-amber-900 bg-amber-100 border border-amber-300 px-3 py-0.5 rounded-full shadow-2xs">
+                ⚠️ Lưu ý: Tích chọn Ngoại trừ, Từ chối, Trái ngược bắt buộc phải điền lý do
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {AUDIT_OPINIONS.map((opinion) => (
-                <label
-                  key={opinion}
-                  className={`flex items-center gap-2.5 p-3.5 rounded-2xl cursor-pointer border text-center transition-all ${
-                    auditOpinion === opinion
-                      ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-bold shadow-xs'
-                      : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="auditOpinion"
-                    value={opinion}
-                    checked={auditOpinion === opinion}
-                    onChange={() => setAuditOpinion(opinion)}
-                    className="text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer accent-emerald-600"
-                  />
-                  <span className="text-xs sm:text-sm text-left">{opinion}</span>
-                </label>
-              ))}
+              {AUDIT_OPINIONS.map((opinion) => {
+                const isSelected = auditOpinion === opinion;
+                let opinionColorClasses = '';
+                let radioAccent = 'accent-emerald-600';
+
+                if (opinion === 'Ngoại trừ') {
+                  radioAccent = 'accent-amber-600';
+                  opinionColorClasses = isSelected
+                    ? 'bg-amber-200/90 border-2 border-amber-500 text-amber-950 font-black shadow-md ring-2 ring-amber-400 scale-[1.02]'
+                    : 'bg-amber-50/40 border-2 border-amber-200/80 text-amber-900 hover:bg-amber-100/60 hover:border-amber-400';
+                } else if (opinion === 'Từ chối' || opinion === 'Trái ngược') {
+                  radioAccent = 'accent-rose-600';
+                  opinionColorClasses = isSelected
+                    ? 'bg-rose-100/90 border-2 border-rose-600 text-rose-950 font-black shadow-md ring-2 ring-rose-400 scale-[1.02]'
+                    : 'bg-rose-50/40 border-2 border-rose-200/80 text-rose-900 hover:bg-rose-100/60 hover:border-rose-400';
+                } else {
+                  // Chấp nhận toàn phần
+                  radioAccent = 'accent-emerald-600';
+                  opinionColorClasses = isSelected
+                    ? 'bg-emerald-100/90 border-2 border-emerald-600 text-emerald-950 font-black shadow-md ring-2 ring-emerald-400 scale-[1.02]'
+                    : 'bg-emerald-50/40 border-2 border-emerald-200/80 text-emerald-900 hover:bg-emerald-100/60 hover:border-emerald-400';
+                }
+
+                return (
+                  <label
+                    key={opinion}
+                    className={`flex items-center gap-2.5 p-3.5 rounded-2xl cursor-pointer border text-center transition-all ${opinionColorClasses}`}
+                  >
+                    <input
+                      type="radio"
+                      name="auditOpinion"
+                      value={opinion}
+                      checked={isSelected}
+                      onChange={() => setAuditOpinion(opinion)}
+                      className={`w-4 h-4 cursor-pointer ${radioAccent}`}
+                    />
+                    <span className="text-xs sm:text-sm text-left font-bold">{opinion}</span>
+                  </label>
+                );
+              })}
             </div>
 
-            {/* Cảnh báo khi chọn Ngoại trừ, Từ chối, Trái ngược */}
-            {(auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược') && (
-              <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-300 text-amber-950 text-xs flex items-center gap-2.5 animate-in fade-in duration-200 shadow-xs">
-                <span className="text-xl flex-shrink-0">⚠️</span>
+            {/* Cảnh báo tương ứng với màu ý kiến đã chọn */}
+            {auditOpinion === 'Ngoại trừ' && (
+              <div className="mt-3 p-3.5 rounded-2xl bg-amber-50 border-2 border-amber-400 text-amber-950 text-xs flex items-center gap-2.5 animate-in fade-in duration-200 shadow-xs">
+                <span className="text-2xl flex-shrink-0">⚠️</span>
                 <span className="font-medium">
-                  <strong className="text-amber-950 font-black">Lưu ý quan trọng:</strong> Bạn đang chọn ý kiến <strong>&quot;{auditOpinion}&quot;</strong>. Bắt buộc phải điền chi tiết lý do vào ô thông tin bổ sung bên dưới!
+                  <strong className="text-amber-950 font-black">Lưu ý ý kiến Ngoại trừ (Vàng):</strong> Bạn đang chọn ý kiến <strong>&quot;Ngoại trừ&quot;</strong>. Bắt buộc phải điền chi tiết lý do ngoại trừ vào ô thông tin bổ sung bên dưới!
+                </span>
+              </div>
+            )}
+
+            {(auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược') && (
+              <div className="mt-3 p-3.5 rounded-2xl bg-rose-50 border-2 border-rose-400 text-rose-950 text-xs flex items-center gap-2.5 animate-in fade-in duration-200 shadow-xs">
+                <span className="text-2xl flex-shrink-0">🚨</span>
+                <span className="font-medium">
+                  <strong className="text-rose-950 font-black">Lưu ý ý kiến {auditOpinion} (Đỏ):</strong> Bạn đang chọn ý kiến <strong>&quot;{auditOpinion}&quot;</strong>. Bắt buộc phải điền chi tiết lý do vào ô thông tin bổ sung bên dưới!
                 </span>
               </div>
             )}

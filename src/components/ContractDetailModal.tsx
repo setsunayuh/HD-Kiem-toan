@@ -149,8 +149,18 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
                 <span className="font-medium text-slate-900">{contract.reportDate}</span>
               </div>
               <div>
-                <span className="text-xs text-slate-500 block">Ý kiến kiểm toán:</span>
-                <span className="font-bold text-emerald-700">{contract.auditOpinion}</span>
+                <span className="text-xs text-slate-500 block mb-0.5">Ý kiến kiểm toán:</span>
+                <span
+                  className={`inline-block px-2.5 py-0.5 rounded text-xs font-bold ${
+                    contract.auditOpinion === 'Ngoại trừ'
+                      ? 'bg-amber-100 text-amber-950 border border-amber-300'
+                      : contract.auditOpinion === 'Từ chối' || contract.auditOpinion === 'Trái ngược'
+                      ? 'bg-rose-100 text-rose-950 border border-rose-300'
+                      : 'bg-emerald-100 text-emerald-950 border border-emerald-300'
+                  }`}
+                >
+                  {contract.auditOpinion}
+                </span>
               </div>
 
               <div>

@@ -16,11 +16,9 @@ import {
   deleteContract,
   markContractSynced,
 } from './services/storageService';
-import {
-  sendContractToSheetWebhook,
-  DEFAULT_WEBHOOK_URL,
-} from './services/googleSheetsWebhook';
+import { sendContractToSheetWebhook, DEFAULT_WEBHOOK_URL } from './services/googleSheetsWebhook';
 import { AlertCircle, FileSpreadsheet, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { SnowEffect } from './components/SnowEffect';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'form' | 'list' | 'stats'>('form');
@@ -118,7 +116,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans antialiased text-slate-800 selection:bg-emerald-600 selection:text-white">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-emerald-50/20 to-slate-100 flex flex-col font-sans antialiased text-slate-800 selection:bg-emerald-600 selection:text-white relative">
+      {/* Gentle Christmas Snowfall */}
+      <SnowEffect />
+
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}

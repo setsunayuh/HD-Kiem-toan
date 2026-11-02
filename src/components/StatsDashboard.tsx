@@ -188,8 +188,8 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ contracts }) => 
         </div>
       </div>
 
-      {/* Middle Grid: Services, Report Types, Release Status */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Middle Grid: Services, Report Types, Release Status, Audit Opinions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Service Breakdown */}
         <div className="bg-white p-6 rounded-3xl border border-emerald-200 shadow-sm">
           <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
@@ -279,6 +279,46 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ contracts }) => 
                           ? 'bg-gradient-to-r from-emerald-600 to-teal-500'
                           : 'bg-slate-400'
                       } rounded-full transition-all duration-500`}
+                      style={{ width: `${item.percentage}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Audit Opinion Breakdown (Xanh / Vàng / Đỏ) */}
+        <div className="bg-white p-6 rounded-3xl border border-amber-200 shadow-sm">
+          <h3 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-amber-600" />
+            <span>Ý Kiến Kiểm Toán 🎁</span>
+          </h3>
+
+          <div className="space-y-4">
+            {opinionStats.map((item) => {
+              let barColor = 'from-emerald-500 to-teal-600';
+              let textColor = 'text-emerald-700';
+
+              if (item.name === 'Ngoại trừ') {
+                barColor = 'from-amber-400 to-amber-600';
+                textColor = 'text-amber-700';
+              } else if (item.name === 'Từ chối' || item.name === 'Trái ngược') {
+                barColor = 'from-rose-500 to-red-600';
+                textColor = 'text-rose-700';
+              }
+
+              return (
+                <div key={item.name} className="space-y-1.5">
+                  <div className="flex justify-between text-xs font-semibold">
+                    <span className="text-slate-700">{item.name}</span>
+                    <span className={`font-bold ${textColor}`}>
+                      {item.count} HĐ ({item.percentage}%)
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden border border-slate-200">
+                    <div
+                      className={`h-full bg-gradient-to-r ${barColor} rounded-full transition-all duration-500`}
                       style={{ width: `${item.percentage}%` }}
                     />
                   </div>

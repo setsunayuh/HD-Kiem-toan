@@ -81,13 +81,13 @@ export const ContractList: React.FC<ContractListProps> = ({
   const getOpinionBadge = (opinion: string) => {
     switch (opinion) {
       case 'Chấp nhận toàn phần':
-        return 'bg-emerald-50 text-emerald-800 border-emerald-300';
+        return 'bg-emerald-50 text-emerald-800 border-emerald-300 font-bold';
       case 'Ngoại trừ':
-        return 'bg-amber-50 text-amber-800 border-amber-300';
+        return 'bg-amber-100 text-amber-950 border-amber-400 font-black';
       case 'Từ chối':
-        return 'bg-red-50 text-red-800 border-red-300';
+        return 'bg-rose-100 text-rose-950 border-rose-400 font-black';
       case 'Trái ngược':
-        return 'bg-rose-50 text-rose-800 border-rose-300';
+        return 'bg-rose-100 text-rose-950 border-rose-400 font-black';
       default:
         return 'bg-slate-100 text-slate-800 border-slate-300';
     }
