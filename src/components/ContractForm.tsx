@@ -433,43 +433,43 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
   return (
     <div className="max-w-5xl mx-auto py-6 px-4 sm:px-6">
-      {/* Banner Halloween on White Background: Crisp White with Vibrant Pumpkin Orange, Amethyst Purple, and Spooky Emoticons */}
-      <div className="mb-6 relative rounded-3xl overflow-hidden p-6 sm:p-7 bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-purple-500/10 border-2 border-orange-300 shadow-md">
+      {/* Banner Christmas 2026: Elegant Pine Green, Rose Ruby, Champagne Gold, and Snowy Accents */}
+      <div className="mb-6 relative rounded-3xl overflow-hidden p-6 sm:p-7 bg-gradient-to-r from-emerald-600/10 via-teal-600/10 to-rose-600/10 border-2 border-emerald-300 shadow-md">
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-orange-500 text-white shadow-xs">
-                <Flame className="w-3.5 h-3.5 text-amber-200 animate-pulse" />
-                🎃 Halloween Audit Season 🦇
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black tracking-wider uppercase bg-emerald-700 text-white shadow-xs">
+                <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                🎄 Christmas Audit Season 2026 ❄️
               </span>
-              <span className="text-xs text-purple-700 font-bold bg-purple-100 px-2.5 py-0.5 rounded-full border border-purple-200">
-                👻 Mùa Kiểm Toán 2026 🍬
+              <span className="text-xs text-rose-700 font-bold bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                🎁 Mùa Kiểm Toán Giáng Sinh 2026 ✨
               </span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 flex items-center gap-2">
               <span>Biểu Mẫu Nhập Hợp Đồng & Phân Công Nhóm</span>
-              <span className="text-xl">🕯️</span>
+              <span className="text-xl">🎄</span>
             </h2>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-2xl bg-white border border-orange-300 text-orange-700 shadow-sm">
-            <Ghost className="w-4 h-4 text-orange-500" />
-            <span>Tự Động Lưu Sheet 🕸️</span>
+          <div className="flex items-center gap-2 text-xs font-bold px-3.5 py-2 rounded-2xl bg-white border border-emerald-300 text-emerald-800 shadow-xs">
+            <Sparkles className="w-4 h-4 text-emerald-600" />
+            <span>Tự Động Lưu Sheet ❄️</span>
           </div>
         </div>
       </div>
 
       <form onSubmit={handleOkSubmit} className="space-y-7">
         {/* SECTION 1: THÔNG TIN KHÁCH HÀNG & HỢP ĐỒNG */}
-        <div className="bg-white rounded-3xl border border-orange-200 shadow-md p-6 sm:p-7 transition-all hover:border-orange-400">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-orange-100">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-orange-500/30">
+        <div className="bg-white rounded-3xl border border-emerald-200 shadow-md p-6 sm:p-7 transition-all hover:border-emerald-400">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-emerald-100">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center font-black text-base shadow-sm shadow-emerald-600/30">
               1
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-wide flex items-center gap-1.5">
                 <span>Thông Tin Khách Hàng & Hợp Đồng</span>
-                <span>🎃</span>
+                <span>🎄</span>
               </h3>
               <p className="text-xs text-slate-500">
                 Nhập mã khách hàng (tối đa 5 số), tên khách hàng, số và ngày ký hợp đồng
@@ -482,13 +482,13 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                  Mã khách hàng <span className="text-orange-600">*</span>
+                  Mã khách hàng <span className="text-rose-600">*</span>
                   <span className="text-xs font-normal text-slate-500">(tối đa 5 chữ số)</span>
                 </label>
                 <div className="flex items-center gap-2">
                   <span
                     className={`text-xs font-mono font-bold ${
-                      customerCode.length === 5 ? 'text-orange-600' : 'text-slate-500'
+                      customerCode.length === 5 ? 'text-emerald-700' : 'text-slate-500'
                     }`}
                   >
                     {customerCode.length}/5 số
@@ -496,7 +496,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   <button
                     type="button"
                     onClick={padCustomerCode}
-                    className="text-[11px] text-orange-600 hover:text-orange-700 underline font-semibold cursor-pointer"
+                    className="text-[11px] text-emerald-700 hover:text-emerald-800 underline font-semibold cursor-pointer"
                     title="Đệm số 0 vào trước cho đủ 5 số"
                   >
                     Đệm 5 số
@@ -509,14 +509,14 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 onChange={handleCustomerCodeChange}
                 placeholder="VD: 00128 hoặc 12345"
                 maxLength={5}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono tracking-wider transition-all"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-mono tracking-wider transition-all"
               />
             </div>
 
             {/* Tên khách hàng */}
             <div>
               <label className="block text-sm font-bold text-slate-800 mb-1.5">
-                Tên khách hàng <span className="text-orange-600">*</span>
+                Tên khách hàng <span className="text-rose-600">*</span>
               </label>
               <div className="relative">
                 <Building2 className="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
@@ -525,7 +525,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="VD: Công ty Cổ phần Thép Miền Đông"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm transition-all"
                 />
               </div>
             </div>
@@ -534,9 +534,9 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                  Số hợp đồng <span className="text-orange-600">*</span>
+                  Số hợp đồng <span className="text-rose-600">*</span>
                 </label>
-                <span className="text-xs text-orange-700 bg-orange-100 border border-orange-200 px-2 py-0.5 rounded-md font-mono font-bold">
+                <span className="text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md font-mono font-bold">
                   Mẫu: 000/0000
                 </span>
               </div>
@@ -546,7 +546,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 onChange={handleContractNumberChange}
                 placeholder="VD: 086/2026 (3 số đầu / 4 số năm)"
                 maxLength={8}
-                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono tracking-wider transition-all"
+                className="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-mono tracking-wider transition-all"
               />
               <p className="text-[11px] text-slate-500 mt-1">
                 3 số đầu là số hợp đồng, 4 số sau dấu &quot;/&quot; là năm phát hành.
@@ -557,13 +557,13 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                  Ngày hợp đồng <span className="text-orange-600">*</span>
+                  Ngày hợp đồng <span className="text-rose-600">*</span>
                   <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
                 </label>
                 <button
                   type="button"
                   onClick={() => setToday(setContractDate)}
-                  className="text-[11px] text-orange-600 hover:text-orange-700 font-bold cursor-pointer"
+                  className="text-[11px] text-emerald-700 hover:text-emerald-800 font-bold cursor-pointer"
                 >
                   Hôm nay
                 </button>
@@ -576,7 +576,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   onChange={(e) => handleDateInput(e.target.value, setContractDate)}
                   placeholder="VD: 15/01/2026"
                   maxLength={10}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm font-mono transition-all"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-mono transition-all"
                 />
               </div>
             </div>
@@ -584,15 +584,15 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         </div>
 
         {/* SECTION 2: DỊCH VỤ, LOẠI BÁO CÁO, PHÁT HÀNH & KỲ BÁO CÁO */}
-        <div className="bg-white rounded-3xl border border-purple-200 shadow-md p-6 sm:p-7 transition-all hover:border-purple-400">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-purple-100">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-700 text-white flex items-center justify-center font-black text-base shadow-sm shadow-purple-600/30">
+        <div className="bg-white rounded-3xl border border-teal-200 shadow-md p-6 sm:p-7 transition-all hover:border-teal-400">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-teal-100">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-600 to-emerald-700 text-white flex items-center justify-center font-black text-base shadow-sm shadow-teal-600/30">
               2
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-wide flex items-center gap-1.5">
                 <span>Dịch Vụ, Loại Báo Cáo, Phát Hành & Kỳ Báo Cáo</span>
-                <span>🦇</span>
+                <span>❄️</span>
               </h3>
               <p className="text-xs text-slate-500">
                 Lựa chọn dịch vụ, loại báo cáo, tình trạng phát hành và kỳ kế toán theo mẫu dd/mm/yyyy
@@ -607,12 +607,12 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <div className="bg-slate-50/70 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between">
                 <div>
                   <label className="block text-sm font-bold text-slate-800 mb-2">
-                    Dịch vụ <span className="text-orange-600">*</span>
+                    Dịch vụ <span className="text-rose-600">*</span>
                   </label>
                   <select
                     value={service}
                     onChange={(e) => setService(e.target.value as ServiceType)}
-                    className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-medium transition-all shadow-2xs"
+                    className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm font-medium transition-all shadow-2xs"
                   >
                     {SERVICE_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -628,7 +628,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                         value={serviceOther}
                         onChange={(e) => setServiceOther(e.target.value)}
                         placeholder="Nhập tên dịch vụ khác..."
-                        className="w-full h-11 px-3.5 rounded-xl bg-white border border-orange-400 text-slate-900 placeholder-slate-400 text-sm focus:ring-2 focus:ring-orange-500 font-medium shadow-2xs"
+                        className="w-full h-11 px-3.5 rounded-xl bg-white border border-teal-400 text-slate-900 placeholder-slate-400 text-sm focus:ring-2 focus:ring-teal-500 font-medium shadow-2xs"
                         autoFocus
                       />
                     </div>
@@ -637,21 +637,21 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               </div>
 
               {/* 2. Loại báo cáo */}
-              <div className="bg-purple-50/40 p-4 rounded-2xl border border-purple-200 flex flex-col justify-between">
+              <div className="bg-teal-50/30 p-4 rounded-2xl border border-teal-200 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-                      <Layers className="w-4 h-4 text-purple-600" />
-                      Loại báo cáo <span className="text-orange-600">*</span>
+                      <Layers className="w-4 h-4 text-teal-600" />
+                      Loại báo cáo <span className="text-rose-600">*</span>
                     </label>
-                    <span className="text-[11px] text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full font-bold border border-purple-200">
+                    <span className="text-[11px] text-teal-800 bg-teal-100 px-2.5 py-0.5 rounded-full font-bold border border-teal-200">
                       Riêng / Hợp nhất / Tổng hợp
                     </span>
                   </div>
                   <select
                     value={reportType}
                     onChange={(e) => setReportType(e.target.value as ReportType)}
-                    className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm transition-all font-semibold shadow-2xs"
+                    className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm transition-all font-semibold shadow-2xs"
                   >
                     {REPORT_TYPE_OPTIONS.map((opt) => (
                       <option key={opt} value={opt}>
@@ -667,7 +667,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                         value={reportTypeOther}
                         onChange={(e) => setReportTypeOther(e.target.value)}
                         placeholder="Nhập loại báo cáo khác..."
-                        className="w-full h-11 px-3.5 rounded-xl bg-white border border-purple-400 text-slate-900 placeholder-slate-400 text-sm focus:ring-2 focus:ring-purple-500 font-medium shadow-2xs"
+                        className="w-full h-11 px-3.5 rounded-xl bg-white border border-teal-400 text-slate-900 placeholder-slate-400 text-sm focus:ring-2 focus:ring-teal-500 font-medium shadow-2xs"
                         autoFocus
                       />
                     </div>
@@ -679,10 +679,10 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             {/* Hàng 2: Phát hành & Kỳ báo cáo (Cân đối 2 cột đều nhau) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-3">
               {/* 3. Phát hành */}
-              <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-200 flex flex-col justify-between">
+              <div className="bg-emerald-50/30 p-4 rounded-2xl border border-emerald-200 flex flex-col justify-between">
                 <div>
                   <label className="block text-sm font-bold text-slate-800 mb-2">
-                    Tình trạng phát hành <span className="text-orange-600">*</span>
+                    Tình trạng phát hành <span className="text-rose-600">*</span>
                   </label>
                   <div className="grid grid-cols-2 gap-2.5">
                     <button
@@ -703,11 +703,11 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       onClick={() => setReleaseStatus('Đã phát hành')}
                       className={`h-11 px-3 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
                         releaseStatus === 'Đã phát hành'
-                          ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white border-orange-600 shadow-md shadow-orange-500/30 ring-2 ring-orange-300'
-                          : 'bg-white border-slate-300 text-slate-600 hover:bg-orange-50'
+                          ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-emerald-700 shadow-md shadow-emerald-600/30 ring-2 ring-emerald-300'
+                          : 'bg-white border-slate-300 text-slate-600 hover:bg-emerald-50'
                       }`}
                     >
-                      <span className="text-sm">🎃</span>
+                      <span className="text-sm">🎄</span>
                       <span>Đã phát hành</span>
                     </button>
                   </div>
@@ -719,7 +719,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                      Kỳ báo cáo <span className="text-orange-600">*</span>
+                      Kỳ báo cáo <span className="text-rose-600">*</span>
                       <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
                     </label>
                     <div className="flex items-center gap-1">
@@ -728,7 +728,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                           key={preset}
                           type="button"
                           onClick={() => setReportPeriod(preset)}
-                          className="text-[10px] px-2 py-0.5 bg-orange-100 hover:bg-orange-200 text-orange-800 border border-orange-300 rounded-md cursor-pointer font-bold"
+                          className="text-[10px] px-2 py-0.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 rounded-md cursor-pointer font-bold"
                           title="Chọn nhanh kỳ báo cáo kết thúc năm"
                         >
                           {preset}
@@ -744,7 +744,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       onChange={(e) => handleDateInput(e.target.value, setReportPeriod)}
                       placeholder={`VD: 31/12/${currentYear - 1}`}
                       maxLength={10}
-                      className="w-full h-11 pl-10 pr-4 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wider transition-all shadow-2xs font-semibold"
+                      className="w-full h-11 pl-10 pr-4 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm font-mono tracking-wider transition-all shadow-2xs font-semibold"
                     />
                   </div>
                 </div>
@@ -757,7 +757,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 <span className="text-2xl flex-shrink-0 mt-0.5">⚠️</span>
                 <div className="flex-1 text-xs sm:text-sm">
                   <strong className="font-extrabold text-amber-950 block text-sm mb-0.5">
-                    Lưu ý quan trọng: Nhớ kiểm tra lại ngày báo cáo! 🎃📝
+                    Lưu ý quan trọng: Nhớ kiểm tra lại ngày báo cáo! 🎄📝
                   </strong>
                   <span className="text-amber-800 text-xs">
                     Hợp đồng đang đánh dấu là <b>&quot;Đã phát hành&quot;</b>. Vui lòng rà soát chính xác <b>Số báo cáo</b> và <b>Ngày báo cáo ({reportDate || 'chưa điền'})</b> trước khi lưu để dữ liệu đồng bộ lên Google Sheet chính xác 100%.
@@ -772,7 +772,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <div className="md:col-span-8 bg-slate-50/70 p-4 rounded-2xl border border-slate-200">
                 <div className="flex flex-wrap items-center justify-between mb-2 gap-2">
                   <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                    Số báo cáo <span className="text-orange-600">*</span>
+                    Số báo cáo <span className="text-rose-600">*</span>
                     <span className="text-xs font-normal text-slate-500">(nhập đầy đủ theo ý kiến kiểm toán)</span>
                   </label>
                   <button
@@ -783,7 +783,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       const code = customerCode ? customerCode.padStart(5, '0') : '00070';
                       setReportNumber(`${num}/${yr}/BCKT-HCM.${code}`);
                     }}
-                    className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 font-extrabold transition-colors cursor-pointer"
+                    className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-300 font-extrabold transition-colors cursor-pointer"
                     title="Gợi ý số báo cáo chuẩn theo ý kiến kiểm toán"
                   >
                     ⚡ Gợi ý: {contractNumber ? contractNumber.split('/')[0] : '251'}/{contractNumber && contractNumber.includes('/') ? contractNumber.split('/')[1] : currentYear}/BCKT-HCM.{customerCode ? customerCode.padStart(5, '0') : '00070'}
@@ -794,10 +794,10 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   value={reportNumber}
                   onChange={(e) => setReportNumber(e.target.value)}
                   placeholder="Ví dụ: 251/2026/BCKT-HCM.00070"
-                  className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm font-mono tracking-wide transition-all font-bold shadow-2xs"
+                  className="w-full h-11 px-4 rounded-xl bg-white border border-slate-300 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm font-mono tracking-wide transition-all font-bold shadow-2xs"
                 />
                 <p className="text-[11px] text-slate-500 mt-1.5 flex items-center gap-1.5">
-                  <Info className="w-3.5 h-3.5 text-purple-600 flex-shrink-0" />
+                  <Info className="w-3.5 h-3.5 text-teal-600 flex-shrink-0" />
                   <span>
                     Lưu ý: Lấy thông tin theo ý kiến kiểm toán. Ví dụ: <strong className="text-slate-800 font-mono">251/2026/BCKT-HCM.00070</strong>
                   </span>
@@ -809,13 +809,13 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="text-sm font-bold text-slate-800 flex items-center gap-1">
-                      Ngày báo cáo <span className="text-orange-600">*</span>
+                      Ngày báo cáo <span className="text-rose-600">*</span>
                       <span className="text-xs font-normal text-slate-500">(dd/mm/yyyy)</span>
                     </label>
                     <button
                       type="button"
                       onClick={() => setToday(setReportDate)}
-                      className="text-[11px] px-2 py-0.5 rounded-md bg-purple-100 hover:bg-purple-200 text-purple-800 border border-purple-200 font-bold cursor-pointer"
+                      className="text-[11px] px-2 py-0.5 rounded-md bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-200 font-bold cursor-pointer"
                     >
                       Hôm nay
                     </button>
@@ -831,7 +831,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       className={`w-full h-11 pl-10 pr-4 rounded-xl border text-slate-900 placeholder-slate-400 text-sm font-mono transition-all shadow-2xs font-semibold ${
                         releaseStatus === 'Đã phát hành'
                           ? 'bg-amber-50/70 border-amber-400 focus:bg-white focus:ring-2 focus:ring-amber-500'
-                          : 'bg-white border-slate-300 focus:ring-2 focus:ring-purple-500'
+                          : 'bg-white border-slate-300 focus:ring-2 focus:ring-teal-500'
                       }`}
                     />
                   </div>
@@ -842,15 +842,15 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         </div>
 
         {/* SECTION 3: NHÂN SỰ KÝ DUYỆT & Ý KIẾN KIỂM TOÁN */}
-        <div className="bg-white rounded-3xl border border-orange-200 shadow-md p-6 sm:p-7 transition-all hover:border-orange-400">
-          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-orange-100">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-orange-500/30">
+        <div className="bg-white rounded-3xl border border-emerald-200 shadow-md p-6 sm:p-7 transition-all hover:border-emerald-400">
+          <div className="flex items-center gap-3 pb-4 mb-6 border-b border-emerald-100">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-emerald-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-amber-500/30">
               3
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-wide flex items-center gap-1.5">
                 <span>Thành Viên BGĐ, Kiểm Toán Viên & Ý Kiến Kiểm Toán</span>
-                <span>🧙</span>
+                <span>🎅</span>
               </h3>
               <p className="text-xs text-slate-500">
                 Tích chọn người ký báo cáo và nội dung ý kiến kiểm toán
@@ -860,10 +860,10 @@ export const ContractForm: React.FC<ContractFormProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Thành viên Ban Giám đốc */}
-            <div className="bg-orange-50/40 p-4 rounded-2xl border border-orange-200">
-              <label className="block text-sm font-black text-orange-900 mb-3 flex items-center gap-1.5">
-                <UserCheck className="w-4 h-4 text-orange-600" />
-                Thành viên Ban Giám đốc <span className="text-orange-600">*</span>
+            <div className="bg-emerald-50/30 p-4 rounded-2xl border border-emerald-200">
+              <label className="block text-sm font-black text-emerald-900 mb-3 flex items-center gap-1.5">
+                <UserCheck className="w-4 h-4 text-emerald-600" />
+                Thành viên Ban Giám đốc <span className="text-rose-600">*</span>
               </label>
               <div className="space-y-2">
                 {BOARD_MEMBERS.map((name) => (
@@ -871,7 +871,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     key={name}
                     className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
                       boardMember === name
-                        ? 'bg-white border-orange-500 text-orange-950 font-bold shadow-xs'
+                        ? 'bg-white border-emerald-500 text-emerald-950 font-bold shadow-xs'
                         : 'bg-white/80 border-slate-200 text-slate-700 hover:bg-white'
                     }`}
                   >
@@ -881,7 +881,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       value={name}
                       checked={boardMember === name}
                       onChange={() => setBoardMember(name)}
-                      className="text-orange-600 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
+                      className="text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer accent-emerald-600"
                     />
                     <span className="text-sm">{name}</span>
                   </label>
@@ -898,17 +898,17 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={boardMemberOther}
                     onChange={(e) => setBoardMemberOther(e.target.value)}
                     placeholder="Nhập họ và tên Thành viên BGĐ..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-orange-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-orange-500 text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-emerald-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-emerald-500 text-sm"
                   />
                 </div>
               )}
             </div>
 
             {/* Kiểm toán viên */}
-            <div className="bg-purple-50/40 p-4 rounded-2xl border border-purple-200">
-              <label className="block text-sm font-black text-purple-900 mb-3 flex items-center gap-1.5">
-                <UserCheck className="w-4 h-4 text-purple-600" />
-                Kiểm toán viên <span className="text-orange-600">*</span>
+            <div className="bg-teal-50/30 p-4 rounded-2xl border border-teal-200">
+              <label className="block text-sm font-black text-teal-900 mb-3 flex items-center gap-1.5">
+                <UserCheck className="w-4 h-4 text-teal-600" />
+                Kiểm toán viên <span className="text-rose-600">*</span>
               </label>
               <div className="space-y-2">
                 {AUDITOR_MEMBERS.map((name) => (
@@ -916,7 +916,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     key={name}
                     className={`flex items-center gap-3 p-2.5 rounded-xl cursor-pointer transition-all border ${
                       auditor === name
-                        ? 'bg-white border-purple-500 text-purple-950 font-bold shadow-xs'
+                        ? 'bg-white border-teal-500 text-teal-950 font-bold shadow-xs'
                         : 'bg-white/80 border-slate-200 text-slate-700 hover:bg-white'
                     }`}
                   >
@@ -926,7 +926,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                       value={name}
                       checked={auditor === name}
                       onChange={() => setAuditor(name)}
-                      className="text-purple-600 focus:ring-purple-500 w-4 h-4 cursor-pointer accent-purple-600"
+                      className="text-teal-600 focus:ring-teal-500 w-4 h-4 cursor-pointer accent-teal-600"
                     />
                     <span className="text-sm">{name}</span>
                   </label>
@@ -943,7 +943,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={auditorOther}
                     onChange={(e) => setAuditorOther(e.target.value)}
                     placeholder="Nhập họ và tên Kiểm toán viên..."
-                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-purple-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-purple-500 text-sm"
+                    className="w-full px-3.5 py-2 rounded-xl bg-white border border-teal-400 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-teal-500 text-sm"
                   />
                 </div>
               )}
@@ -954,7 +954,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
           <div className="mt-6 pt-6 border-t border-slate-200">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
               <label className="text-sm font-black text-slate-800 flex items-center gap-1.5">
-                <span>Ý kiến kiểm toán</span> <span className="text-orange-600">*</span>
+                <span>Ý kiến kiểm toán</span> <span className="text-rose-600">*</span>
               </label>
               <span className="text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
                 ⚠️ Lưu ý: Tích chọn Ngoại trừ, Từ chối, Trái ngược phải điền lý do
@@ -966,7 +966,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   key={opinion}
                   className={`flex items-center gap-2.5 p-3.5 rounded-2xl cursor-pointer border text-center transition-all ${
                     auditOpinion === opinion
-                      ? 'bg-orange-50 border-orange-500 text-orange-950 font-bold shadow-xs'
+                      ? 'bg-emerald-50 border-emerald-600 text-emerald-950 font-bold shadow-xs'
                       : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                   }`}
                 >
@@ -976,7 +976,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                     value={opinion}
                     checked={auditOpinion === opinion}
                     onChange={() => setAuditOpinion(opinion)}
-                    className="text-orange-600 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
+                    className="text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer accent-emerald-600"
                   />
                   <span className="text-xs sm:text-sm text-left">{opinion}</span>
                 </label>
@@ -1005,7 +1005,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   type="checkbox"
                   checked={otherMatters}
                   onChange={(e) => setOtherMatters(e.target.checked)}
-                  className="rounded text-orange-600 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
+                  className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer accent-emerald-600"
                 />
                 <span className="text-sm font-semibold text-slate-800">Vấn đề khác</span>
               </label>
@@ -1015,7 +1015,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                   type="checkbox"
                   checked={emphasisOfMatter}
                   onChange={(e) => setEmphasisOfMatter(e.target.checked)}
-                  className="rounded text-orange-600 focus:ring-orange-500 w-4 h-4 cursor-pointer accent-orange-500"
+                  className="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 cursor-pointer accent-emerald-600"
                 />
                 <span className="text-sm font-semibold text-slate-800">Nhấn mạnh</span>
               </label>
@@ -1026,7 +1026,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 <span>
                   Lý do bổ sung ý kiến kiểm toán{' '}
                   {(auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược' || emphasisOfMatter || otherMatters) && (
-                    <span className="text-orange-600 font-extrabold">* (Bắt buộc điền)</span>
+                    <span className="text-rose-600 font-extrabold">* (Bắt buộc điền)</span>
                   )}:
                 </span>
                 {(auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược') && (
@@ -1040,7 +1040,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                 value={opinionReason}
                 onChange={(e) => setOpinionReason(e.target.value)}
                 placeholder="Nhập lý do Ngoại trừ, Từ chối, Trái ngược. Nội dung vấn đề khác hoặc vấn đề cần nhấn mạnh trong báo cáo."
-                className={`w-full px-4 py-2.5 rounded-xl border text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 text-sm transition-all shadow-2xs ${
+                className={`w-full px-4 py-2.5 rounded-xl border text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 text-sm transition-all shadow-2xs ${
                   (auditOpinion === 'Ngoại trừ' || auditOpinion === 'Từ chối' || auditOpinion === 'Trái ngược') && !opinionReason.trim()
                     ? 'bg-amber-50/60 border-amber-400'
                     : 'bg-slate-50 border-slate-300'
@@ -1051,16 +1051,16 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         </div>
 
         {/* SECTION 4: THÔNG TIN THỰC HIỆN HỢP ĐỒNG (BẢNG NHÂN SỰ & TỶ LỆ) */}
-        <div className="bg-white rounded-3xl border border-purple-200 shadow-md p-6 sm:p-7 transition-all hover:border-purple-400">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-purple-100 gap-3">
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-7 transition-all hover:border-emerald-300">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-4 border-b border-slate-100 gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-purple-500/30">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-600 to-emerald-600 text-white flex items-center justify-center font-black text-base shadow-sm shadow-rose-600/30">
                 4
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
                   <span>Thông Tin Thực Hiện Hợp Đồng</span>
-                  <span>🔮</span>
+                  <span>🎁</span>
                 </h3>
                 <p className="text-xs text-slate-500">
                   Phân công Vị trí, Tên, Phần hành (chọn nhiều: Q, F tiền, F vay...) và Tỷ lệ thực hiện (%)
@@ -1090,7 +1090,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <button
                 type="button"
                 onClick={handleAutoBalance}
-                className="px-3.5 py-2 text-xs bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-200 rounded-xl font-bold transition-all cursor-pointer"
+                className="px-3.5 py-2 text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl font-bold transition-all cursor-pointer"
                 title="Tự động chia đều cho các thành viên để tổng đủ 100%"
               >
                 Cân đối 100%
@@ -1113,7 +1113,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               </thead>
               <tbody className="divide-y divide-slate-200 text-xs">
                 {teamMembers.map((member, index) => (
-                  <tr key={member.id} className="hover:bg-orange-50/20 transition-colors">
+                  <tr key={member.id} className="hover:bg-emerald-50/20 transition-colors">
                     {/* STT */}
                     <td className="py-3 px-3 text-center text-slate-500 font-bold font-mono">
                       {index + 1}
@@ -1126,7 +1126,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                         value={member.position}
                         onChange={(e) => handleUpdateTeamRow(member.id, 'position', e.target.value)}
                         placeholder="VD: Nhóm trưởng, Trợ lý 1..."
-                        className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 text-xs font-semibold"
+                        className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-emerald-500 text-xs font-semibold"
                       />
                     </td>
 
@@ -1136,7 +1136,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                         <select
                           value={member.name}
                           onChange={(e) => handleUpdateTeamRow(member.id, 'name', e.target.value)}
-                          className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-purple-500 text-xs font-bold shadow-2xs"
+                          className="w-full px-3 py-1.5 rounded-xl bg-white border border-slate-300 text-slate-900 focus:ring-2 focus:ring-emerald-500 text-xs font-bold shadow-2xs"
                         >
                           {TEAM_MEMBERS.map((memberName) => (
                             <option key={memberName} value={memberName}>
@@ -1153,7 +1153,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                               handleUpdateTeamRow(member.id, 'customName', e.target.value)
                             }
                             placeholder="Nhập họ và tên..."
-                            className="w-full px-2.5 py-1.5 rounded-lg bg-orange-50 border border-orange-400 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-orange-500 text-xs font-semibold shadow-2xs animate-in fade-in duration-150"
+                            className="w-full px-2.5 py-1.5 rounded-lg bg-emerald-50 border border-emerald-400 text-slate-900 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-emerald-500 text-xs font-semibold shadow-2xs animate-in fade-in duration-150"
                             autoFocus
                           />
                         )}
@@ -1180,7 +1180,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
                           onChange={(e) =>
                             handleUpdateTeamRow(member.id, 'percentage', Number(e.target.value))
                           }
-                          className="w-full px-3 py-1.5 pr-7 text-right rounded-xl bg-white border border-slate-300 text-slate-900 font-mono font-bold focus:ring-2 focus:ring-orange-500 text-xs"
+                          className="w-full px-3 py-1.5 pr-7 text-right rounded-xl bg-white border border-slate-300 text-slate-900 font-mono font-bold focus:ring-2 focus:ring-emerald-500 text-xs"
                         />
                         <span className="absolute right-2.5 top-2 text-slate-400 font-bold text-xs pointer-events-none">
                           %
@@ -1231,7 +1231,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <button
               type="button"
               onClick={handleAddTeamRow}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 text-xs font-bold transition-all shadow-2xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition-all shadow-2xs cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               <span>+ Thêm Thành Viên Nhóm (Trợ lý...)</span>
@@ -1244,7 +1244,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
         </div>
 
         {/* BOTTOM ACTION BAR */}
-        <div className="bg-white rounded-3xl border border-orange-200 shadow-lg p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="bg-white rounded-3xl border border-emerald-200 shadow-lg p-5 sm:p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <div className="text-xs text-slate-500">
               Kiểm tra toàn bộ thông tin hợp đồng & phân công nhóm kiểm toán
@@ -1252,8 +1252,8 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <div className="text-sm font-semibold text-slate-800 flex items-center gap-2 mt-0.5">
               <span>Trạng thái:</span>
               {totalPercentage === 100 ? (
-                <span className="text-emerald-600 flex items-center gap-1 font-bold">
-                  <CheckCircle2 className="w-4 h-4" /> Đầy đủ tỷ lệ 100% 🎃
+                <span className="text-emerald-700 flex items-center gap-1 font-bold">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Đầy đủ tỷ lệ 100% 🎄
                 </span>
               ) : (
                 <span className="text-amber-600 flex items-center gap-1 font-bold">
@@ -1276,7 +1276,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
             <button
               type="submit"
               disabled={isSyncing}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600 hover:from-amber-600 hover:via-orange-600 hover:to-purple-700 text-white font-extrabold text-base tracking-wider shadow-lg shadow-orange-500/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-10 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-rose-600 hover:from-emerald-700 hover:via-teal-700 hover:to-rose-700 text-white font-extrabold text-base tracking-wider shadow-lg shadow-emerald-600/25 transition-all transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSyncing ? (
                 <>
@@ -1328,7 +1328,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <button
                 type="button"
                 onClick={() => setShowErrorModal(false)}
-                className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-xl text-sm font-bold transition-colors cursor-pointer shadow-sm"
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-sm font-bold transition-colors cursor-pointer shadow-sm"
               >
                 Đã hiểu, quay lại chỉnh sửa
               </button>
@@ -1340,41 +1340,41 @@ export const ContractForm: React.FC<ContractFormProps> = ({
       {/* SUCCESS MODAL */}
       {saveSuccessContract && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-orange-300 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center gap-3 text-emerald-600 mb-4 pb-3 border-b border-orange-100">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 shadow-2xl border border-emerald-300 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center gap-3 text-emerald-600 mb-4 pb-3 border-b border-emerald-100">
               <div className="w-12 h-12 rounded-2xl bg-emerald-100 border border-emerald-300 flex items-center justify-center flex-shrink-0">
                 <CheckCircle2 className="w-7 h-7 text-emerald-600" />
               </div>
               <div>
                 <h3 className="text-lg font-black text-slate-900 flex items-center gap-1.5">
                   <span>Lưu Hợp Đồng Thành Công!</span>
-                  <span>🎃</span>
+                  <span>🎄✨</span>
                 </h3>
-                <p className="text-xs text-orange-700 font-bold">
+                <p className="text-xs text-emerald-800 font-bold">
                   Số HĐ: {saveSuccessContract.contractNumber} • {saveSuccessContract.customerName}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-2.5 text-sm text-slate-700 bg-orange-50/40 p-4 rounded-2xl border border-orange-200">
+            <div className="space-y-2.5 text-sm text-slate-700 bg-emerald-50/40 p-4 rounded-2xl border border-emerald-200">
               <div className="flex justify-between text-xs">
                 <span className="text-slate-500">Mã KH:</span>
                 <span className="font-mono font-bold text-slate-900">{saveSuccessContract.customerCode}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-slate-500">Dịch vụ:</span>
-                <span className="font-semibold text-orange-800">{saveSuccessContract.service}</span>
+                <span className="font-semibold text-emerald-800">{saveSuccessContract.service}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-slate-500">Loại báo cáo:</span>
-                <span className="font-semibold text-purple-800">{saveSuccessContract.reportType}</span>
+                <span className="font-semibold text-teal-800">{saveSuccessContract.reportType}</span>
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-slate-500">Tình trạng phát hành:</span>
                 <span
                   className={`font-bold px-2 py-0.5 rounded text-[11px] ${
                     saveSuccessContract.releaseStatus === 'Đã phát hành'
-                      ? 'bg-orange-100 text-orange-800 border border-orange-300'
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                       : 'bg-slate-100 text-slate-700 border border-slate-300'
                   }`}
                 >
@@ -1395,16 +1395,16 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               </div>
               <div className="flex justify-between text-xs">
                 <span className="text-slate-500">Nhóm thực hiện:</span>
-                <span className="font-bold text-orange-700">
+                <span className="font-bold text-emerald-800">
                   {saveSuccessContract.teamMembers.length} thành viên (Tổng 100%)
                 </span>
               </div>
 
               {/* Sheet sync feedback */}
-              <div className="pt-2.5 border-t border-orange-200 mt-2">
+              <div className="pt-2.5 border-t border-emerald-200 mt-2">
                 <div className="flex items-center gap-2 text-xs font-bold text-emerald-700">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                  <span>Đã tự động gửi dữ liệu về file Google Sheet của bạn! 🎃</span>
+                  <span>Đã tự động gửi dữ liệu về file Google Sheet của bạn! ❄️</span>
                 </div>
               </div>
             </div>
@@ -1423,7 +1423,7 @@ export const ContractForm: React.FC<ContractFormProps> = ({
               <button
                 type="button"
                 onClick={() => setSaveSuccessContract(null)}
-                className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-xl text-xs font-bold shadow-sm transition-colors cursor-pointer"
+                className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-bold shadow-sm transition-colors cursor-pointer"
               >
                 Xem Hợp Đồng Vừa Lưu
               </button>

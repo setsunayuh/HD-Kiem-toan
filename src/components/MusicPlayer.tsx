@@ -17,7 +17,7 @@ interface MusicPlayerProps {
 }
 
 export const MusicPlayer: React.FC<MusicPlayerProps> = ({
-  videoId = 'y70kmGVY2tA',
+  videoId = 'E8gmARGvPlI',
 }) => {
   const [isPlaying, setIsPlaying] = useState<boolean>(true);
   const [isMuted, setIsMuted] = useState<boolean>(false);
@@ -63,15 +63,15 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
       <div
         className={`transition-all duration-300 overflow-hidden ${
           isExpanded
-            ? 'fixed bottom-4 right-4 z-50 w-80 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-3'
+            ? 'fixed bottom-4 right-4 z-50 w-80 bg-slate-900 border border-emerald-500/50 rounded-2xl shadow-2xl p-3'
             : 'absolute w-1 h-1 opacity-0 pointer-events-none -left-[9999px]'
         }`}
       >
         {isExpanded && (
           <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-slate-200">
-            <span className="text-xs font-bold flex items-center gap-1.5">
-              <Disc3 className="w-3.5 h-3.5 text-indigo-400 animate-spin" />
-              Nhạc Nền YouTube
+            <span className="text-xs font-bold flex items-center gap-1.5 text-emerald-400">
+              <Disc3 className="w-3.5 h-3.5 text-rose-400 animate-spin" />
+              <span>Nhạc Giáng Sinh 2026 🎄</span>
             </span>
             <button
               type="button"
@@ -87,34 +87,34 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
           <iframe
             ref={iframeRef}
             src={`https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1&loop=1&playlist=${videoId}&controls=1`}
-            title="Nhạc nền kiểm toán"
+            title="Nhạc Giáng Sinh kiểm toán 2026"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             className="w-full h-full border-0"
           />
         </div>
       </div>
 
-      {/* Main Navbar Pill Control */}
-      <div className="flex items-center gap-2 bg-gradient-to-r from-slate-800 to-indigo-950/80 px-3 py-1.5 rounded-xl border border-indigo-500/30 shadow-sm">
-        {/* Animated Disc / Wave indicator */}
+      {/* Main Navbar Control */}
+      <div className="flex items-center gap-2 bg-gradient-to-r from-slate-900 via-emerald-950 to-teal-950 px-3 py-1.5 rounded-xl border border-emerald-500/40 shadow-sm">
+        {/* Animated Disc / Christmas Tree indicator */}
         <div className="flex items-center gap-1.5">
           <Disc3
-            className={`w-4 h-4 text-teal-400 ${
+            className={`w-4 h-4 text-emerald-400 ${
               isPlaying ? 'animate-spin [animation-duration:3s]' : 'opacity-60'
             }`}
           />
-          <span className="text-xs font-semibold text-slate-200 hidden md:inline-block max-w-[110px] truncate">
-            Nhạc Nền
+          <span className="text-xs font-bold text-emerald-100 hidden md:inline-block max-w-[125px] truncate">
+            Last Christmas 🎄
           </span>
         </div>
 
         {/* Sound Waves Animation */}
         {isPlaying && (
           <div className="hidden sm:flex items-end gap-0.5 h-3.5 px-1">
-            <span className="w-0.5 bg-teal-400 rounded-full animate-bounce [animation-delay:0ms] h-3" />
-            <span className="w-0.5 bg-teal-400 rounded-full animate-bounce [animation-delay:150ms] h-2" />
-            <span className="w-0.5 bg-teal-400 rounded-full animate-bounce [animation-delay:300ms] h-3.5" />
-            <span className="w-0.5 bg-teal-400 rounded-full animate-bounce [animation-delay:75ms] h-2.5" />
+            <span className="w-0.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:0ms] h-3" />
+            <span className="w-0.5 bg-rose-400 rounded-full animate-bounce [animation-delay:150ms] h-2" />
+            <span className="w-0.5 bg-amber-300 rounded-full animate-bounce [animation-delay:300ms] h-3.5" />
+            <span className="w-0.5 bg-emerald-400 rounded-full animate-bounce [animation-delay:75ms] h-2.5" />
           </div>
         )}
 
@@ -122,8 +122,8 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
         <button
           type="button"
           onClick={togglePlay}
-          className="p-1 rounded-lg bg-indigo-600/80 hover:bg-indigo-600 text-white transition-colors"
-          title={isPlaying ? 'Tạm dừng nhạc nền' : 'Bật nhạc nền'}
+          className="p-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white transition-colors cursor-pointer shadow-xs"
+          title={isPlaying ? 'Tạm dừng nhạc Giáng Sinh' : 'Bật nhạc Giáng Sinh'}
         >
           {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
         </button>
@@ -132,13 +132,13 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
         <button
           type="button"
           onClick={toggleMute}
-          className="p-1 rounded-lg hover:bg-slate-700/60 text-slate-300 hover:text-white transition-colors"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-white transition-colors cursor-pointer"
           title={isMuted ? 'Bật tiếng' : 'Tắt tiếng'}
         >
           {isMuted ? (
-            <VolumeX className="w-3.5 h-3.5 text-red-400" />
+            <VolumeX className="w-3.5 h-3.5 text-rose-400" />
           ) : (
-            <Volume2 className="w-3.5 h-3.5 text-teal-400" />
+            <Volume2 className="w-3.5 h-3.5 text-teal-300" />
           )}
         </button>
 
@@ -146,7 +146,7 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
         <button
           type="button"
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-1 rounded-lg hover:bg-slate-700/60 text-slate-400 hover:text-white transition-colors hidden sm:inline-flex"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors hidden sm:inline-flex cursor-pointer"
           title="Xem video trên màn hình nhỏ"
         >
           <Maximize2 className="w-3.5 h-3.5" />
@@ -156,8 +156,8 @@ export const MusicPlayer: React.FC<MusicPlayerProps> = ({
           href={`https://www.youtube.com/watch?v=${videoId}&list=RD${videoId}&start_radio=1`}
           target="_blank"
           rel="noreferrer"
-          className="p-1 rounded-lg hover:bg-slate-700/60 text-slate-400 hover:text-white transition-colors"
-          title="Mở trên YouTube"
+          className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+          title="Mở video trên YouTube"
         >
           <ExternalLink className="w-3 h-3" />
         </a>

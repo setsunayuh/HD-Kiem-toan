@@ -118,7 +118,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col font-sans antialiased text-slate-800 selection:bg-orange-500 selection:text-white">
+    <div className="min-h-screen bg-white flex flex-col font-sans antialiased text-slate-800 selection:bg-emerald-600 selection:text-white">
       {/* Top Navbar */}
       <Navbar
         activeTab={activeTab}
@@ -183,17 +183,18 @@ export default function App() {
       )}
 
       {/* Footer */}
-      <footer className="bg-slate-50 text-slate-600 text-xs py-6 border-t border-orange-200">
+      <footer className="bg-slate-50 text-slate-600 text-xs py-6 border-t border-emerald-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-orange-700">QUẢN LÝ HỢP ĐỒNG KIỂM TOÁN</span>
+            <span className="font-extrabold text-emerald-800">QUẢN LÝ HỢP ĐỒNG KIỂM TOÁN</span>
             <span>•</span>
-            <span className="font-medium">Mùa Kiểm Toán 2026 🎃🦇</span>
+            <span className="font-medium text-slate-600">Mùa Kiểm Toán Giáng Sinh 2026 🎄❄️</span>
           </div>
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-slate-500 font-medium">
-            <span className="font-extrabold text-orange-700 italic flex items-center gap-1.5 bg-orange-100/70 border border-orange-200 px-2.5 py-1 rounded-lg">
-              <span>🎃</span>
+            <span className="font-extrabold text-emerald-800 italic flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl shadow-xs">
+              <span>🎄</span>
               <span>&ldquo;Đi làm đừng đi lầm&rdquo;</span>
+              <span>✨</span>
             </span>
           </div>
         </div>

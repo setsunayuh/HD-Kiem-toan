@@ -20,25 +20,25 @@ export const Navbar: React.FC<NavbarProps> = ({
   contractsCount,
 }) => {
   return (
-    <header className="bg-white/95 backdrop-blur-md text-slate-800 border-b border-orange-200 sticky top-0 z-40 shadow-sm">
+    <header className="bg-white/95 backdrop-blur-md text-slate-800 border-b border-emerald-200 sticky top-0 z-40 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 gap-3">
           {/* Logo & App Title */}
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-orange-500 via-amber-500 to-purple-600 p-0.5 shadow-md shadow-orange-500/20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-rose-600 p-0.5 shadow-md shadow-emerald-600/20 flex items-center justify-center">
               <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center">
-                <span className="text-2xl">🎃</span>
+                <span className="text-2xl">🎄</span>
               </div>
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-black tracking-tight text-slate-900 uppercase sm:text-2xl flex items-center gap-1.5">
                   <span>Quản Lý Hợp Đồng Kiểm Toán</span>
-                  <span className="text-lg">🦇</span>
+                  <span className="text-lg">❄️</span>
                 </h1>
-                <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800 border border-orange-300">
-                  <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-ping" />
-                  Tự Động Lưu Sheet 👻
+                <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                  Tự Động Lưu Sheet ❄️
                 </span>
               </div>
             </div>
@@ -46,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Section: Background Music Player */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <MusicPlayer videoId="y70kmGVY2tA" />
+            <MusicPlayer videoId="E8gmARGvPlI" />
           </div>
         </div>
 
@@ -57,12 +57,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('form')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'form'
-                ? 'bg-gradient-to-r from-orange-500 via-amber-500 to-purple-600 text-white shadow-md shadow-orange-500/25 border border-orange-400'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-orange-50/70 border border-transparent'
+                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-rose-600 text-white shadow-md shadow-emerald-600/25 border border-emerald-500'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/70 border border-transparent'
             }`}
           >
-            <PlusCircle className="w-4 h-4 text-orange-400" />
-            <span>🎃 Nhập Hợp Đồng Mới</span>
+            <PlusCircle className="w-4 h-4 text-emerald-300" />
+            <span>🎄 Nhập Hợp Đồng Mới</span>
           </button>
 
           <button
@@ -70,17 +70,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('list')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'list'
-                ? 'bg-gradient-to-r from-orange-500 via-amber-500 to-purple-600 text-white shadow-md shadow-orange-500/25 border border-orange-400'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-orange-50/70 border border-transparent'
+                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-rose-600 text-white shadow-md shadow-emerald-600/25 border border-emerald-500'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/70 border border-transparent'
             }`}
           >
-            <TableProperties className="w-4 h-4 text-purple-400" />
+            <TableProperties className="w-4 h-4 text-teal-300" />
             <span>📋 Danh Sách Hợp Đồng</span>
             <span
               className={`ml-1.5 px-2 py-0.5 rounded-full text-xs font-bold ${
                 activeTab === 'list'
                   ? 'bg-white/20 text-white'
-                  : 'bg-orange-100 text-orange-800 border border-orange-200'
+                  : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
               }`}
             >
               {contractsCount}
@@ -92,11 +92,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('stats')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeTab === 'stats'
-                ? 'bg-gradient-to-r from-orange-500 via-amber-500 to-purple-600 text-white shadow-md shadow-orange-500/25 border border-orange-400'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-orange-50/70 border border-transparent'
+                ? 'bg-gradient-to-r from-emerald-600 via-teal-600 to-rose-600 text-white shadow-md shadow-emerald-600/25 border border-emerald-500'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-emerald-50/70 border border-transparent'
             }`}
           >
-            <BarChart3 className="w-4 h-4 text-amber-400" />
+            <BarChart3 className="w-4 h-4 text-amber-300" />
             <span>📊 Thống Kê Nhóm & Tỷ Lệ</span>
           </button>
         </nav>

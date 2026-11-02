@@ -30,19 +30,19 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white text-slate-900 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-orange-200 relative my-8 print:m-0 print:p-6 print:border-none print:shadow-none">
+      <div className="bg-white text-slate-900 rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-emerald-200 relative my-8 print:m-0 print:p-6 print:border-none print:shadow-none">
         {/* Modal Controls (Hidden during print) */}
-        <div className="flex items-center justify-between pb-4 mb-6 border-b border-orange-100 print:hidden">
+        <div className="flex items-center justify-between pb-4 mb-6 border-b border-emerald-100 print:hidden">
           <div className="flex items-center gap-3">
-            <span className="p-2.5 rounded-2xl bg-orange-100 text-orange-700 border border-orange-200">
-              <span className="text-xl">🎃</span>
+            <span className="p-2.5 rounded-2xl bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <span className="text-xl">🎄</span>
             </span>
             <div>
               <h3 className="text-lg font-black text-slate-900 flex items-center gap-1.5">
                 <span>Phiếu Ghi Nhận Hợp Đồng Kiểm Toán</span>
-                <span className="text-sm">🦇</span>
+                <span className="text-sm">❄️</span>
               </h3>
-              <p className="text-xs text-orange-700 font-mono font-bold">
+              <p className="text-xs text-emerald-700 font-mono font-bold">
                 Số HĐ: {contract.contractNumber} • Kỳ BC: {contract.reportPeriod}
               </p>
             </div>
@@ -52,9 +52,9 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
             <button
               type="button"
               onClick={handlePrint}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-orange-50 hover:bg-orange-100 text-orange-800 border border-orange-300 text-xs font-bold transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold transition-colors cursor-pointer"
             >
-              <Printer className="w-4 h-4 text-orange-600" />
+              <Printer className="w-4 h-4 text-emerald-700" />
               <span>In phiếu 🖨️</span>
             </button>
             <button
@@ -81,8 +81,8 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
 
           {/* Section 1: Customer & Contract */}
           <div>
-            <h4 className="text-xs font-black text-orange-900 uppercase tracking-wider mb-2 bg-orange-50 p-2 px-3 rounded-xl border border-orange-200">
-              I. Thông Tin Khách Hàng & Hợp Đồng 🎃
+            <h4 className="text-xs font-black text-emerald-900 uppercase tracking-wider mb-2 bg-emerald-50 p-2 px-3 rounded-xl border border-emerald-200">
+              I. Thông Tin Khách Hàng & Hợp Đồng 🎄
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm p-2">
               <div>
@@ -95,7 +95,7 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
               </div>
               <div>
                 <span className="text-xs text-slate-500 block">Số hợp đồng:</span>
-                <span className="font-mono font-bold text-orange-700">{contract.contractNumber}</span>
+                <span className="font-mono font-bold text-emerald-700">{contract.contractNumber}</span>
               </div>
               <div>
                 <span className="text-xs text-slate-500 block">Ngày hợp đồng:</span>
@@ -103,7 +103,7 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
               </div>
               <div>
                 <span className="text-xs text-slate-500 block">Dịch vụ:</span>
-                <span className="font-semibold text-purple-800">
+                <span className="font-semibold text-teal-800">
                   {contract.service === 'Khác' ? `Khác (${contract.serviceOther})` : contract.service}
                 </span>
               </div>
@@ -112,13 +112,13 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
 
           {/* Section 2: Audit Report & Opinions */}
           <div>
-            <h4 className="text-xs font-black text-purple-900 uppercase tracking-wider mb-2 bg-purple-50 p-2 px-3 rounded-xl border border-purple-200">
-              II. Báo Cáo Kiểm Toán & Nhân Sự Ký Duyệt 🦇
+            <h4 className="text-xs font-black text-teal-900 uppercase tracking-wider mb-2 bg-teal-50 p-2 px-3 rounded-xl border border-teal-200">
+              II. Báo Cáo Kiểm Toán & Nhân Sự Ký Duyệt ❄️
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm p-2">
               <div>
                 <span className="text-xs text-slate-500 block">Loại báo cáo:</span>
-                <span className="font-bold text-purple-800">
+                <span className="font-bold text-teal-800">
                   {contract.reportType === 'Khác'
                     ? `Khác: ${contract.reportTypeOther}`
                     : contract.reportType || 'Riêng'}
@@ -129,11 +129,11 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
                 <span
                   className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${
                     contract.releaseStatus === 'Đã phát hành'
-                      ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                      ? 'bg-emerald-100 text-emerald-900 border border-emerald-300'
                       : 'bg-slate-100 text-slate-700 border border-slate-300'
                   }`}
                 >
-                  {contract.releaseStatus === 'Đã phát hành' ? '🎃 Đã phát hành' : '⏳ Chưa phát hành'}
+                  {contract.releaseStatus === 'Đã phát hành' ? '🎄 Đã phát hành' : '⏳ Chưa phát hành'}
                 </span>
               </div>
               <div>
@@ -179,12 +179,12 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
               <div className="mt-2 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
                 <span className="font-bold text-slate-700">Thông tin bổ sung ý kiến: </span>
                 {contract.additionalOpinions.emphasisOfMatter && (
-                  <span className="inline-block px-2 py-0.5 bg-orange-100 text-orange-800 rounded font-semibold mr-1.5">
+                  <span className="inline-block px-2 py-0.5 bg-rose-100 text-rose-800 rounded font-semibold mr-1.5">
                     Nhấn mạnh
                   </span>
                 )}
                 {contract.additionalOpinions.otherMatters && (
-                  <span className="inline-block px-2 py-0.5 bg-purple-100 text-purple-800 rounded font-semibold mr-1.5">
+                  <span className="inline-block px-2 py-0.5 bg-teal-100 text-teal-800 rounded font-semibold mr-1.5">
                     Vấn đề khác
                   </span>
                 )}
@@ -197,9 +197,9 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
 
           {/* Section 3: Team Breakdown Table */}
           <div>
-            <div className="flex items-center justify-between mb-2 bg-orange-50 p-2 px-3 rounded-xl border border-orange-200">
-              <h4 className="text-xs font-black text-orange-900 uppercase tracking-wider">
-                III. Thông Tin Thực Hiện Hợp Đồng 🔮
+            <div className="flex items-center justify-between mb-2 bg-emerald-50 p-2 px-3 rounded-xl border border-emerald-200">
+              <h4 className="text-xs font-black text-emerald-900 uppercase tracking-wider">
+                III. Thông Tin Thực Hiện Hợp Đồng 🎁
               </h4>
               <span className="text-xs font-black text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
                 Tổng: 100%
@@ -225,10 +225,10 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
                     <td className="py-2.5 px-3 border-r border-slate-200 font-medium text-slate-800">
                       {tm.position}
                     </td>
-                    <td className="py-2.5 px-3 border-r border-slate-200 font-bold text-orange-800">
+                    <td className="py-2.5 px-3 border-r border-slate-200 font-bold text-slate-900">
                       {tm.name}
                     </td>
-                    <td className="py-2.5 px-3 border-r border-slate-200 text-purple-800 font-semibold">
+                    <td className="py-2.5 px-3 border-r border-slate-200 text-teal-800 font-semibold">
                       {tm.section}
                     </td>
                     <td className="py-2.5 px-3 text-right font-mono font-bold text-emerald-700">
@@ -275,14 +275,14 @@ export const ContractDetailModal: React.FC<ContractDetailModalProps> = ({
 
         {/* Footer actions */}
         <div className="mt-8 pt-4 border-t border-slate-200 flex justify-between items-center print:hidden">
-          <div className="text-xs text-orange-700 flex items-center gap-1.5 font-bold">
+          <div className="text-xs text-emerald-700 flex items-center gap-1.5 font-bold">
             <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-            <span>Tự động lưu về Google Sheet của bạn 🎃</span>
+            <span>Tự động lưu về Google Sheet của bạn ❄️</span>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="ml-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white text-xs font-bold transition-colors cursor-pointer shadow-sm"
+            className="ml-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs font-bold transition-colors cursor-pointer shadow-sm"
           >
             Đóng
           </button>
