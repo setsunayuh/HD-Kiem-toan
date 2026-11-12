@@ -1,7 +1,7 @@
 import { AuditContract, GoogleSheetConfig } from '../types/audit';
 
 export const DEFAULT_WEBHOOK_URL =
-  'https://script.google.com/macros/s/AKfycbzuGtc7COTQk-rQ6JQ5i6qswVkafum5JMQ6GkCOWCYBM-ZMkLctt8NAxyjhKdGf9a4g/exec';
+  'https://script.google.com/macros/s/AKfycbzOPBoffEDePPH-Urej_8jej3veRCjfDbr91f4rhCzZw88bdO-AzcG24tBgDvPc-xG0/exec';
 
 export const DEFAULT_SHEET_NAMES = {
   contracts: 'Hợp Đồng Kiểm Toán',
@@ -73,6 +73,7 @@ function doPost(e) {
     var ngayHD = data.contractDate || data.ngayHopDong || data["Ngày Hợp Đồng"] || "";
     var dichVu = data.service || data.dichVu || data["Dịch Vụ"] || "";
     var loaiBC = data.reportType || data.loaiBaoCao || data["Loại Báo Cáo"] || "";
+    var phatHanh = data.releaseStatus || data.phatHanh || data["Phát Hành"] || "Chưa phát hành";
     var kyBC = data.reportPeriod || data.kyBaoCao || data["Kỳ Báo Cáo"] || "";
     var soBC = data.reportNumber || data.soBaoCao || data["Số Báo Cáo"] || "";
     var ngayBC = data.reportDate || data.ngayBaoCao || data["Ngày Báo Cáo"] || "";
@@ -91,17 +92,17 @@ function doPost(e) {
     if (sheetContracts.getLastRow() === 0) {
       sheetContracts.appendRow([
         "Mã Khách Hàng", "Tên Khách Hàng", "Số Hợp Đồng", "Ngày Hợp Đồng",
-        "Dịch Vụ", "Loại Báo Cáo", "Kỳ Báo Cáo", "Số Báo Cáo", "Ngày Báo Cáo",
+        "Dịch Vụ", "Loại Báo Cáo", "Phát Hành", "Kỳ Báo Cáo", "Số Báo Cáo", "Ngày Báo Cáo",
         "Thành Viên BGĐ", "Kiểm Toán Viên", "Ý Kiến Kiểm Toán",
         "Thông Tin Bổ Sung", "Lý Do Bổ Sung", "Số Nhân Sự",
         "Tóm Tắt Phân Công", "Thời Gian Lưu"
       ]);
-      sheetContracts.getRange(1, 1, 1, 17).setFontWeight("bold").setBackground("#f97316").setFontColor("#ffffff");
+      sheetContracts.getRange(1, 1, 1, 18).setFontWeight("bold").setBackground("#f97316").setFontColor("#ffffff");
       sheetContracts.setFrozenRows(1);
     }
 
     var contractRow = data.contractRow || [
-      maKH, tenKH, soHD, ngayHD, dichVu, loaiBC, kyBC, soBC, ngayBC,
+      maKH, tenKH, soHD, ngayHD, dichVu, loaiBC, phatHanh, kyBC, soBC, ngayBC,
       bgd, ktv, yKien, thongTinBoSung, lyDo, soNhanSu, tomTatNhanSu, nowStr
     ];
     sheetContracts.appendRow(contractRow);
