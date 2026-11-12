@@ -1,7 +1,7 @@
 import { AuditContract, GoogleSheetConfig } from '../types/audit';
 
 export const DEFAULT_WEBHOOK_URL =
-  'https://script.google.com/macros/s/AKfycbx34NPwUsvQQs7mcNDkoj7knbRN3NLUxIXFd-ZUgNb9MkCCn4WcNgRYAP6FQvW04pFR/exec';
+  'https://script.google.com/macros/s/AKfycbwCcUEuC8jMK4pz7UlXrfC_0VMn0QpClwQnDUxApE9IbaIzlUlmKF6HGdeRDm64DmDN/exec';
 
 export const DEFAULT_SHEET_NAMES = {
   contracts: 'Hợp Đồng Kiểm Toán',
